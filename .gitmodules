@@ -1,0 +1,3 @@
+[submodule "lexrank"]
+	path = lexrank
+	url = https://github.com/linanqiu/lexrank.git
