@@ -1,3 +1,6 @@
 [submodule "lexrank"]
 	path = lexrank
 	url = https://github.com/linanqiu/lexrank.git
+[submodule "pdrt-sandbox"]
+	path = pdrt-sandbox
+	url = https://github.com/hbrouwer/pdrt-sandbox.git
