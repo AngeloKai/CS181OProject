@@ -5,6 +5,15 @@ import Data.List
 import Data.Char
 import FPH
 
+
+-- Parses can parse both single sentence or a block sentence" 
+parses :: String -> [ParseTree Cat Cat]
+parses str = let ws = lexer str 
+             in  [ s | catlist   <- collectCats lexicon ws, 
+                       (s,[],[]) <- prsTXT [] catlist  
+                                 ++ prsYN  [] catlist   
+                                 ++ prsWH  [] catlist ]
+
 -- Section 9.1
 
 -- A parse tree for English
@@ -895,13 +904,6 @@ prsWH = \us xs ->
        gapfs      <- [filter (/= Wh) (fs (t2c wh))],
        gap        <- [Cat "#" (catLabel (t2c wh)) gapfs []], 
        (yn,ws,zs) <- push gap prsYN vs ys ]
-
-parses :: String -> [ParseTree Cat Cat]
-parses str = let ws = lexer str 
-             in  [ s | catlist   <- collectCats lexicon ws, 
-                       (s,[],[]) <- prsTXT [] catlist  
-                                 ++ prsYN  [] catlist   
-                                 ++ prsWH  [] catlist ]
 
 testSuite1 :: [String]
 testSuite1 = 

@@ -1,8 +1,40 @@
+-- The file is used to interpret the following sentences
+-- The girl laughed. No dwarf admired some princess that 
+-- shuddered. Every girl that some boy loved cheered. The
+-- wizard that helped Snow White defeated the giant. 
+
+
 module DRAC where 
 
 import Data.List
 import Model
 import P hiding (person)
+
+sum1 :: Int -> Int 
+sum1 x = x + 1
+
+sum2 :: Int -> Int 
+sum2 x = x * 2
+
+add = sum2 . sum1 
+
+parseEval :: String -> Prop'
+parseEval = eval' . treeToSent . parses
+
+-- treeToSent :: [ParseTree Cat Cat] -> Sent
+-- treeToSent = 
+
+-- eval' :: Sent -> Prop'
+-- eval' s = intS' s (convert context) True
+
+
+-- Parses can parse both single sentence or a block sentence" 
+-- parses :: String -> [ParseTree Cat Cat]
+-- parses str = let ws = lexer str 
+--              in  [ s | catlist   <- collectCats lexicon ws, 
+--                        (s,[],[]) <- prsTXT [] catlist  
+--                                  ++ prsYN  [] catlist   
+--                                  ++ prsWH  [] catlist ]
 
 type Context = [Entity]
 type Prop    = [Context]
