@@ -21,8 +21,74 @@ add = sum2 . sum1
 parseEval :: String -> Prop'
 parseEval = eval' . treeToSent . parses
 
--- treeToSent :: [ParseTree Cat Cat] -> Sent
--- treeToSent = 
+--[
+--[.S[Thrd,Fem,Sg] 
+--[alice NP[Fem,Sg,Thrd,Nom],
+--[.VP[Tense] [admired VP[Tense],dorothy NP[Thrd,Fem,Sg]]]
+--]
+--]]
+-- = [Branch "S"
+--  [Branch "NP" [Leaf "alice"],
+--  Branch "VP" [Branch "TV" [Leaf "admired"],
+--              [Branch "NP" [Leaf "dorothy"]]]
+--  ]
+--  ]
+
+treeToSent :: [ParseTree Cat Cat] -> Sent
+treeToSent [Branch "S" rest ] = treeToSent rest
+treeToSent [Branch "NP" np, Branch "VP" vp] = Sent (treeToNP np) (treeToVP vp)
+--treeToSent [Branch "NP" [Leaf np], Branch "VP" [Branch "TV" [Leaf tv], [Branch "NP" [Leaf ]]]]
+--treeToSent [Branch "NP" [ParseTree a b]] = Sent np (treeToSent [ParseTree a b])
+--treeToSent [Ep] = Sent NULL NULL
+--treeToSent [Leaf a] = Sent a NULL
+
+treeToNP :: ParseTree Cat Cat -> NP
+treeToNP (Leaf np) = np
+
+treeToVP :: ParseTree Cat Cat -> VP
+treeToVP (Leaf vp) = vp
+treeToVP (Branch "TV" [Leaf tv], np) = VP1 tv (treeToNP np)
+treeToVP (Branch "TV" [Leaf tv], Branch "REFL" [Leaf refl]) = VP2 tv refl
+
+--data Sent = Sent NP VP | If Sent Sent | Txt Sent Sent
+--          deriving (Eq,Show)
+--data NP   = SnowWhite  | Alice | Dorothy | Goldilocks 
+--          | LittleMook | Atreyu
+--          | PRO Idx    | He | She | It
+--          | NP1 DET CN | NP2 DET RCN 
+--          deriving (Eq,Show)
+--data DET  = Every | Some | No | The 
+--          deriving (Eq,Show)
+--data CN   = Girl   | Boy    | Princess | Dwarf | Giant 
+--          | Wizard | Sword  | Poison 
+--          deriving (Eq,Show) 
+--data RCN  = RCN1 CN That VP | RCN2 CN That NP TV
+--          deriving (Eq,Show)
+--data That = That deriving (Eq,Show)
+--data REFL = Self deriving (Eq,Show)
+
+--data VP   = Laughed | Cheered | Shuddered 
+--          | VP1 TV NP    | VP2 TV REFL 
+--          | VP3 DV NP NP | VP4 DV REFL NP 
+--          | VP5 AUX INF  
+--          deriving (Eq,Show) 
+--data TV   = Loved   | Admired | Helped | Defeated
+--          deriving (Eq,Show)
+--data DV   = Gave deriving (Eq,Show)
+
+--data AUX  = DidNot deriving (Eq,Show) 
+
+--data INF  = Laugh | Cheer  | Shudder 
+--          | INF1  TINF NP  | INF2  DINF NP NP 
+--          deriving (Eq,Show) 
+--data TINF = Love  | Admire | Help | Defeat 
+--          deriving (Eq,Show) 
+--data DINF = Give deriving (Eq,Show) 
+
+--treeToSent [Branch "NP" rest] = treeToSent rest
+
+--data Sent = Sent NP VP | If Sent Sent | Txt Sent Sent
+--          deriving (Eq,Show)
 
 -- eval' :: Sent -> Prop'
 -- eval' s = intS' s (convert context) True

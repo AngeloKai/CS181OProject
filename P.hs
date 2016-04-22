@@ -29,8 +29,22 @@ instance (Show a, Show b) => Show (ParseTree a b) where
 -- A parse tree for "Snow White loved the dwarfs"
 snowwhite = Branch "S" 
             [Branch "NP" [Leaf "Snow White"],
-             Branch "VP" [Branch "TV" [Leaf "loved"],
-                          Branch "NP" [Leaf "the dwarfs"]]]
+             Branch "VP" [Branch "TV" 
+             [Leaf "loved"], Branch "NP" [Leaf "the dwarfs"]
+                          ]]
+-- A parse tree for "SnowWhite laughed"
+snowwhite2 = Branch "S"
+             [Branch "NP" [Leaf "SnowWhite"],
+             Branch "VP" [Leaf "laughed"]]
+
+snowwhite3 :: ParseTree Cat Cat 
+snowwhite3 = Branch (Cat "_" "S" [] []) [Leaf (Cat "snowwhite" "NP" [Thrd, Fem, Sg] []), Branch (Cat "_" "VP" [Tense] [] ) [Leaf (Cat "laughed"   "VP" [Tense] [])]]
+
+--snowwhite3 :: ParseTree Cat Cat 
+--snowwhite3 = Branch (Cat "_" "S" [] []) [Leaf (Cat "snowwhite" "NP" [Thrd, Fem, Sg] []), Leaf (Cat "laughed"   "VP" [Tense] [])]
+
+--snowwhite3 :: ParseTree Cat Cat 
+--snowwhite3 = Branch (Cat "_" "S" [] []) [Leaf (Cat "snowwhite" "NP" [Thrd, Fem, Sg] []), Leaf (Cat "laughed"   "VP" [Tense] [])]
 
 -- A position in the parse tree is a list of indices giving directions from the root
 type Pos = [Int]
