@@ -1,4 +1,4 @@
--- Used to be HW5ModelSoln
+ -- Used to be HW5ModelSoln
 
 module Model where 
 

@@ -18,8 +18,8 @@ sum2 x = x * 2
 
 add = sum2 . sum1 
 
-parseEval :: String -> Prop'
-parseEval = eval' . treeToSent . parses
+--parseEval :: String -> Prop'
+--parseEval = eval' . treeToSent . parses
 
 --[
 --[.S[Thrd,Fem,Sg] 
@@ -34,21 +34,46 @@ parseEval = eval' . treeToSent . parses
 --  ]
 --  ]
 
-treeToSent :: [ParseTree Cat Cat] -> Sent
-treeToSent [Branch "S" rest ] = treeToSent rest
-treeToSent [Branch "NP" np, Branch "VP" vp] = Sent (treeToNP np) (treeToVP vp)
---treeToSent [Branch "NP" [Leaf np], Branch "VP" [Branch "TV" [Leaf tv], [Branch "NP" [Leaf ]]]]
---treeToSent [Branch "NP" [ParseTree a b]] = Sent np (treeToSent [ParseTree a b])
---treeToSent [Ep] = Sent NULL NULL
---treeToSent [Leaf a] = Sent a NULL
+-- snowwhite3 :: ParseTree Cat Cat 
+-- snowwhite3 = Branch (Cat "_" "S" [] []) [ Leaf (Cat "snowwhite" "NP" [Thrd, Fem, Sg] []), 
+-- Branch (Cat "_" "VP" [Tense] [] ) [Leaf (Cat "laughed"   "VP" [Tense] [])] ]
 
-treeToNP :: ParseTree Cat Cat -> NP
-treeToNP (Leaf np) = np
 
-treeToVP :: ParseTree Cat Cat -> VP
-treeToVP (Leaf vp) = vp
-treeToVP (Branch "TV" [Leaf tv], np) = VP1 tv (treeToNP np)
-treeToVP (Branch "TV" [Leaf tv], Branch "REFL" [Leaf refl]) = VP2 tv refl
+--treeToSent :: [ParseTree Cat Cat] -> Sent
+--treeToSent [Branch (Cat _ "S" ls [] ) rest ] = treeToSent rest
+--treeToSent [ Leaf (Cat np "NP" ls [] ), Branch (Cat _ "VP" ls2 [] ) vp ] = 
+--  Sent (treeToNP [Leaf (Cat np "NP" ls [] )] ) (treeToVP vp)
+--treeToSent [ Branch (Cat _ "NP" ls [] ) np , Branch (Cat __ "VP" ls2 [] ) vp ] =
+--  Sent (treeToNP np) (treeToVP vp)
+
+
+
+--treeToNP :: [ParseTree Cat Cat] -> NP
+--treeToNP [ Leaf (Cat np "NP" ls [] ) ] = np
+--treeToNP [ Leaf (Cat det "DET" ls [] ), Leaf (Cat cn "CN" ls2 []) ] = NP1 det cn
+
+--treeToVP :: [ParseTree Cat Cat] -> VP
+--treeToVP [ Leaf (Cat vp "VP" ls []) ] = vp
+--treeToVP [ Leaf (Cat tv "TV" ls []), vp] = VP1 tv (treeToNP vp)
+
+
+--treeToVP :: ParseTree Cat Cat -> VP
+--treeToVP (Leaf vp) = vp
+--treeToVP (Branch "TV" [Leaf tv], np) = VP1 tv (treeToNP np)
+--treeToVP (Branch "TV" [Leaf tv], Branch "REFL" [Leaf refl]) = VP2 tv refl
+
+
+-- treeToSent :: [ParseTree Cat Cat] -> Sent
+-- treeToSent [Branch "S" rest ] = Sent treeToSent rest
+-- treeToSent [Branch "NP" np, Branch "VP" vp] = Sent (treeToNP np) (treeToVP vp)
+
+
+-- treeToSent [Branch "NP" [Leaf np], Branch "VP" [Branch "TV" [Leaf tv], [Branch "NP" [Leaf ]]]]
+-- treeToSent [Branch "NP" [ParseTree a b]] = Sent np (treeToSent [ParseTree a b])
+-- treeToSent [Ep] = Sent NULL NULL
+-- treeToSent [Leaf a] = Sent a NULL
+
+
 
 --data Sent = Sent NP VP | If Sent Sent | Txt Sent Sent
 --          deriving (Eq,Show)

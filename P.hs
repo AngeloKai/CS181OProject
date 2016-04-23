@@ -26,21 +26,24 @@ instance (Show a, Show b) => Show (ParseTree a b) where
   show (Branch l ts) = "[." ++ show l  ++ " " 
                             ++ show ts ++ "]"
 
--- A parse tree for "Snow White loved the dwarfs"
-snowwhite = Branch "S" 
-            [Branch "NP" [Leaf "Snow White"],
-             Branch "VP" [Branch "TV" 
-             [Leaf "loved"], Branch "NP" [Leaf "the dwarfs"]
-                          ]]
--- A parse tree for "SnowWhite laughed"
-snowwhite2 = Branch "S"
-             [Branch "NP" [Leaf "SnowWhite"],
-             Branch "VP" [Leaf "laughed"]]
 
-snowwhite3 :: ParseTree Cat Cat 
-snowwhite3 = Branch (Cat "_" "S" [] []) [Leaf (Cat "snowwhite" "NP" [Thrd, Fem, Sg] []), Branch (Cat "_" "VP" [Tense] [] ) [Leaf (Cat "laughed"   "VP" [Tense] [])]]
+
+-- A parse tree for "Snow White loved the dwarfs"
+--snowwhite = Branch "S" 
+--            [Branch "NP" [Leaf "Snow White"],
+--             Branch "VP" [Branch "TV" 
+--             [Leaf "loved"], Branch "NP" [Leaf "the dwarfs"]
+--                          ]]
+-- A parse tree for "SnowWhite laughed"
+--snowwhite2 = Branch "S"
+--             [Branch "NP" [Leaf "SnowWhite"],
+--             Branch "VP" [Leaf "laughed"]]
 
 --snowwhite3 :: ParseTree Cat Cat 
+--snowwhite3 = Branch (Cat "_" "S" [] []) [ Leaf (Cat "snowwhite" "NP" [Thrd, Fem, Sg] []), 
+--Branch (Cat "_" "VP" [Tense] [] ) [Leaf (Cat "laughed"   "VP" [Tense] [])]]
+
+----snowwhite3 :: ParseTree Cat Cat 
 --snowwhite3 = Branch (Cat "_" "S" [] []) [Leaf (Cat "snowwhite" "NP" [Thrd, Fem, Sg] []), Leaf (Cat "laughed"   "VP" [Tense] [])]
 
 --snowwhite3 :: ParseTree Cat Cat 
@@ -77,7 +80,7 @@ properdominance t = [ (p,q) | p <- pos t,
 
 -- A binary relation showing which positions dominate others
 dominance :: ParseTree a b -> Rel Pos 
-dominance t = [ (p,q) | p <- pos t, 
+dominance t = [ (p,q)  | p <- pos t, 
                         q <- pos t, 
                         prefix p q ]
 
