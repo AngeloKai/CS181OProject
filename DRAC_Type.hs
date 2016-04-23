@@ -11,6 +11,10 @@ type Prop    = [Context]
 type Trans   = Context -> Prop
 type Idx     = Int
 
+type Context' = ([(Idx,Entity)],[Constraint])
+type Prop'    = [Context']
+type Trans'   = Context' -> Bool -> Prop'
+
 data Sent = Sent NP VP | If Sent Sent | Txt Sent Sent
           deriving (Eq,Show)
 data NP   = SnowWhite  | Alice | Dorothy | Goldilocks 

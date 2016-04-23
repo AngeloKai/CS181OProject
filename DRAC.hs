@@ -12,7 +12,7 @@ import P hiding (person)
 import P_Type
 import StringToEntityPredicate
 import DRAC_Type
-
+import SentEx
 
 sum1 :: Int -> Int 
 sum1 x = x + 1
@@ -367,60 +367,6 @@ intRCN (RCN2 cn _ np v) = \i -> conj (intCN cn i)
 eval :: Sent -> Prop
 eval = \ s -> intS s context 
 
-ex1  = Sent Dorothy Cheered
-ex2  = Sent Dorothy Laughed
-ex3  = Sent Dorothy (VP5 DidNot Laugh)
-ex4  = Txt  (Sent Dorothy Cheered)
-            (Sent LittleMook Cheered)
-ex5  = Txt  (Sent Dorothy Cheered)
-            (Sent (PRO 1) (VP1 Admired (NP1 Some Girl)))
-ex6  = Sent (NP1 Some Boy) (VP1 Loved (NP1 Some Princess))
-ex7  = Sent (NP1 Some Boy) (VP1 Loved (NP1 The Princess))
-
-ex8  = Sent (NP1 Some Boy) (VP1 Defeated (NP1 No Giant))
-ex9  = Sent (NP1 The  Boy) (VP1 Defeated (NP1 No Giant))
-ex10 = Sent (NP1 Some Boy) (VP1 Loved (NP1 The Princess))
-
-ex11 = Sent (NP1 No   Boy) (VP1 Loved Goldilocks)
-ex12 = Sent (NP1 Some Boy) (VP1 Loved SnowWhite)
-ex13 = Sent LittleMook (VP1 Loved    (NP1 Some Princess))
-ex14 = Sent LittleMook (VP1 Defeated (NP2 Some (RCN1 Giant 
-                                That (VP1 Loved Alice))))
-ex15 = Sent (NP1 No Wizard) (VP1 Loved Dorothy)
-ex16 = Sent (NP2 No (RCN1 Giant That 
-                    (VP1 Defeated LittleMook))) 
-            (VP1 Loved Dorothy)
-ex17 = Sent (NP2 Some(RCN1 Princess That 
-                     (VP1 Admired LittleMook))) 
-            (VP1 Loved Dorothy)
-ex19 = Sent (PRO 2) (VP1 Loved   (PRO 1))
-ex20 = Sent (PRO 2) (VP1 Admired (PRO 1))
-ex18 = Sent (NP1 The  Boy)  (VP1 Loved SnowWhite)
-ex21 = Sent (NP1 Some Girl) (VP2 Admired Self)
-ex22 = Sent (NP1 No   Boy)  (VP2 Admired Self)
-
--- data Constraint = C1 VP Idx 
---                 | C2 TV Idx Idx 
---                 | C3 DV Idx Idx Idx
---                 | C4 VP Idx 
---                 | C5 TV Idx Idx 
---                 | C6 DV Idx Idx Idx
---                 deriving Eq
-
--- instance Show Constraint where 
---   show (C1 vp i)     = show vp ++ (' ':show i)
---   show (C2 tv i j)   = show tv ++ (' ':show i) 
---                                ++ (' ':show j)
---   show (C3 dv i j k) = show dv ++ (' ':show i) 
---                                ++ (' ':show j) 
---                                ++ (' ':show k)
-
---   show (C4 vp i)     = '-':show vp ++ (' ':show i)
---   show (C5 tv i j)   = '-':show tv ++ (' ':show i) 
---                                    ++ (' ':show j)
---   show (C6 dv i j k) = '-':show dv ++ (' ':show i) 
---                                    ++ (' ':show j) 
---                                    ++ (' ':show k)
 
 maxIndex  :: Constraint -> Idx
 maxIndex (C1 vp i)     = i
@@ -430,9 +376,6 @@ maxIndex (C4 vp i)     = i
 maxIndex (C5 tv i j)   = max i j 
 maxIndex (C6 dv i j k) = maximum [i,j,k]
 
-type Context' = ([(Idx,Entity)],[Constraint])
-type Prop'    = [Context']
-type Trans'   = Context' -> Bool -> Prop'
 
 size :: Context' -> Int
 size (c,co) = length c
@@ -712,43 +655,4 @@ eval' s = intS' s (convert context) True
 evalFresh :: Sent -> Prop'
 evalFresh s = intS' s ([],[]) True
 
-nex1 = Sent He (VP1 Admired (NP1 Some Girl))
 
-nex2 = Sent (NP1 Some Dwarf) (VP1 Defeated (NP1 The Giant))
-
-nex2a = Sent (NP1 Some Dwarf) (VP1 Defeated (NP1 The Giant)) 
-        `Txt` (Sent He Cheered)
-
-nex2b = Sent (NP1 Some Dwarf) (VP1 Defeated (NP1 The Giant)) 
-        `Txt` (Sent He (VP5 DidNot Cheer))
-
-nex3 = (Sent LittleMook Cheered) `Txt` 
-       (Sent He (VP1 Admired (NP1 Some Girl)))
-
-nex4 = Txt (Sent (NP1 Some Dwarf) (VP5 DidNot Shudder))
-           (Sent He (VP1 Defeated (NP1 Some Giant)))
-
-nex5 = (Sent LittleMook (VP5 DidNot (INF1 Admire Dorothy)))
-       `Txt` (Sent He Cheered)
-
-nex6 = Txt (Sent (NP1 Some Dwarf) 
-                 (VP5 DidNot (INF1 Admire Dorothy)))
-           (Sent He (VP5 DidNot Cheer))
-
-nex7 = Sent (NP1 Some Giant) 
-            (VP5 DidNot (INF1 Admire (NP1 Some Princess)))
-
-nex8  = (Sent (NP1 The Princess) (VP1 Defeated (NP1 The Giant))) 
-        `Txt` (Sent She (VP1 Admired He))
-nex9  = Sent He (VP1 Loved He)
-nex10 = Sent He (VP2 Admired Self)
-nex11 = Sent He (VP1 Admired He)
-nex12 = Sent (NP1 The Giant ) (VP2 Admired Self)
-nex13 = Txt (Sent (NP1 The Princess ) (VP2 Admired Self)) 
-            (Sent She (VP1 Loved (NP1 The Giant)))
-nex14 = Txt (Sent (NP1 Some Boy) (VP2 Admired Self))
-            (Sent (NP1 Some Princess) (VP1 Loved He))
-nex15 = If  (Sent (NP1 Some Boy) (VP2 Admired Self))
-            (Sent (NP1 Some Giant) (VP1 Loved He))
-nex16 = Txt (Sent (NP1 No Girl) (VP1 Helped LittleMook))
-            (Sent (NP1 Some Princess) (VP1 Loved He))
