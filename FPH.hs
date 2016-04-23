@@ -4,6 +4,7 @@ where
 
 import Data.List
 import Data.Char
+import FPH_Type
 
 square :: Int -> Int
 square x = x * x
@@ -111,8 +112,6 @@ back s  | s == aUml  = 'a'
         | s == 'y'   = 'u'
         | otherwise  = s
 
-data DeclClass = One | Two | Three | Four | Five 
-
 oSlash,aRing :: Char
 oSlash = chr(248) 
 aRing  = chr(229)
@@ -129,15 +128,6 @@ swedishPlural noun d = case d of
   Four  -> noun ++ "n"
   Five  -> noun
 
-data Subject   = Chomsky | Montague deriving Show
-data Predicate = Wrote String       deriving Show
-
-data Sentence  = S Subject Predicate 
-
-type Sentences = [Sentence]
-
-instance Show Sentence where
-  show (S subj pred) = show subj ++ " " ++ show pred
 
 makeP :: String -> Predicate
 makeP title = Wrote title
@@ -149,8 +139,6 @@ myLast        :: [a] -> a
 myLast [x]    =  x
 myLast (_:xs) =  myLast xs
 myLast  _     =  error "myLast: empty list"
-
-data Colour = RGB Int Int Int deriving Show
 
 showColour :: Colour -> String
 showColour (RGB 0 0 0)       = "black"
@@ -169,12 +157,6 @@ redAlert c@(RGB r _ _) = case r of
    0 -> show c ++ " has no red"
    _ -> show c ++ " has red"
 
-data Feature = F Attr Value deriving (Eq,Show)
-
-data Attr    = Back | High | Round | Cons deriving (Eq,Show)
-data Value   = Plus | Minus               deriving (Eq,Show)
-
-type Phoneme = [Feature]
 
 yawelmaniVowels = [i,a,o,u,e]
 

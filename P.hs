@@ -3,7 +3,9 @@ module P where
 import Prelude hiding ((<*>),(<$>))
 import Data.List
 import Data.Char
+import P_Type
 import FPH
+import Lexicon
 
 
 -- Parses can parse both single sentence or a block sentence" 
@@ -16,15 +18,7 @@ parses str = let ws = lexer str
 
 -- Section 9.1
 
--- A parse tree for English
-data ParseTree a b =  Ep | Leaf a | Branch b [ParseTree a b] 
-                   deriving Eq
-
-instance (Show a, Show b) => Show (ParseTree a b) where
-  show Ep            = "[]"
-  show (Leaf t)      = show t
-  show (Branch l ts) = "[." ++ show l  ++ " " 
-                            ++ show ts ++ "]"
+----------- Functins related to Parse Tree ----------------------
 
 
 
@@ -49,8 +43,6 @@ instance (Show a, Show b) => Show (ParseTree a b) where
 --snowwhite3 :: ParseTree Cat Cat 
 --snowwhite3 = Branch (Cat "_" "S" [] []) [Leaf (Cat "snowwhite" "NP" [Thrd, Fem, Sg] []), Leaf (Cat "laughed"   "VP" [Tense] [])]
 
--- A position in the parse tree is a list of indices giving directions from the root
-type Pos = [Int]
 
 -- Pause returns a list of all positions in the tree
 pos ::  ParseTree a b -> [Pos]
@@ -68,8 +60,6 @@ subtree (Branch _ ts) (i:is) = subtree (ts!!i) is
 subtrees :: ParseTree a b -> [ParseTree a b]
 subtrees t = [ subtree t p | p <- pos t ]
 
--- Type of a binary relation on a
-type Rel a = [(a,a)]
 
 -- A binary relation showing which positions properly dominate others
 properdominance :: ParseTree a b -> Rel Pos 
@@ -174,10 +164,10 @@ parse = \ xs ->
                 ["c",ys,"c"] <- splitN 3 xs,
                 t            <- parse ys   ] 
 
--- Section 9.3
--- type of parser taking a list of items of type a and building
--- output of type b
-type Parser a b = [a] -> [(b,[a])]
+---------------------- Section 9.3 ------------------------------
+-- Functions related to Parsers 
+-- The following functions are for a type of parser taking a list of
+-- items of type a and building output of b 
 
 -- Parser that always succeeds with value r, but doesn't consume input
 succeed :: b -> Parser a b 
@@ -256,9 +246,9 @@ digitize :: Parser Char Int
 digitize = f <$> digit 
   where f c = ord c - ord '0'
 
--- Parser that takes a list of a's and returns a pair consisting of
--- a parse tree and a list of a's not yet used.
-type PARSER a b = Parser a (ParseTree a b)
+-- -- Parser that takes a list of a's and returns a pair consisting of
+-- -- a parse tree and a list of a's not yet used.
+-- type PARSER a b = Parser a (ParseTree a b)
 
 -- Parser that maps empty string to parse tree Ep
 epsilonT :: PARSER a b 
@@ -334,17 +324,7 @@ reaction =  parseManyAs "REACTION" answer
 turn     =  parseAs "TURN" [guess,reaction]
 game     =  turn <|> parseAs "GAME" [turn,game]
 
--- Section 9.4, Features and Categories
-data Feat = Masc  | Fem  | Neutr | MascOrFem 
-          | Sg    | Pl 
-          | Fst   | Snd  | Thrd 
-          | Nom   | AccOrDat 
-          | Pers  | Refl | Wh 
-          | Tense | Infl
-          | On    | With | By | To | From  
-          deriving (Eq,Show,Ord)
-
-type Agreement = [Feat]
+-------------- Section 9.4, Features and Categories ---------
 
 gender, number, person, gcase, pronType, tense, prepType 
            :: Agreement -> Agreement
@@ -360,17 +340,6 @@ prune :: Agreement -> Agreement
 prune fs = if   (Masc `elem` fs || Fem `elem` fs)
            then (delete MascOrFem fs) 
            else fs 
-
-type CatLabel = String
-type Phon     = String
-
-data Cat      = Cat Phon CatLabel Agreement [Cat]
-              deriving Eq
-
-instance Show Cat where
-  show (Cat "_"  label agr subcatlist) = label ++ show agr
-  show (Cat phon label agr subcatlist) = phon  ++ " " 
-                                               ++ label ++ show agr
 
 phon :: Cat -> String
 phon (Cat ph _ _ _) = ph
@@ -404,199 +373,12 @@ assign f c@(Cat phon label fs subcatlist) =
   [Cat phon label fs' subcatlist | 
          fs' <- combine c (Cat "" "" [f] []) ]
 
-lexicon :: String -> [Cat]
-
-lexicon "i"   = [Cat "i"   "NP" [Pers,Fst,Sg,Nom]        []]
-lexicon "me"  = [Cat "me"  "NP" [Pers,Fst,Sg,AccOrDat]   []]
-lexicon "we"  = [Cat "we"  "NP" [Pers,Fst,Pl,Nom]        []]
-lexicon "us"  = [Cat "us"  "NP" [Pers,Fst,Pl,AccOrDat]   []]
-lexicon "you" = [Cat "you" "NP" [Pers,Snd]               []]
-lexicon "he"  = [Cat "he"  "NP" [Pers,Thrd,Sg,Nom,Masc]  []]
-lexicon "him" = [Cat "him" "NP" [Pers,Thrd,Sg,AccOrDat,Masc] 
-                                         []]
-lexicon "she" = [Cat "she" "NP" [Pers,Thrd,Sg,Nom,Fem]   []]
-lexicon "her" = [Cat "her" "NP" [Pers,Thrd,Sg,AccOrDat,Fem] 
-                                         []]
-lexicon "it"  = [Cat "it"  "NP" [Pers,Thrd,Sg,Neutr]     []]
-lexicon "they" = [Cat "they" "NP" [Pers,Thrd,Pl,Nom]     []]
-lexicon "them" = [Cat "them" "NP" [Pers,Thrd,Pl,AccOrDat] 
-                                         []]
-
-lexicon "myself"     = 
- [Cat "myself"     "NP" [Refl,Sg,Fst,AccOrDat] []]
-lexicon "ourselves"  = 
- [Cat "ourselves"  "NP" [Refl,Pl,Fst,AccOrDat] []]
-lexicon "yourself"   = 
- [Cat "yourself"   "NP" [Refl,Sg,Snd,AccOrDat] []]
-lexicon "yourselves" = 
- [Cat "yourselves" "NP" [Refl,Pl,Snd,AccOrDat] []]
-lexicon "himself"    = 
- [Cat "himself"    "NP" [Refl,Sg,Thrd,AccOrDat,Masc]  []]
-lexicon "herself"    = 
- [Cat "herself"    "NP" [Refl,Sg,Thrd,AccOrDat,Fem]   []]
-lexicon "itself"     = 
- [Cat "itself"     "NP" [Refl,Sg,Thrd,AccOrDat,Neutr] []]
-lexicon "themselves" = 
- [Cat "themselves" "NP" [Refl,Pl,Thrd,AccOrDat] []]
-
-lexicon "who"     = [Cat "who" "NP"  [Wh,Thrd,MascOrFem] [], 
-     Cat "who" "REL" [MascOrFem]         []]
-lexicon "whom"    = 
- [Cat "whom" "NP"  [Sg,Wh,Thrd,AccOrDat,MascOrFem] [], 
-  Cat "whom" "REL" [Sg,MascOrFem,AccOrDat]         []]
-lexicon "what"    = 
- [Cat "what" "NP"  [Wh,Thrd,AccOrDat,Neutr]    []]
-lexicon "that"    = [Cat "that"  "REL" []      [], 
-                     Cat "that"  "DET" [Sg]    []]
-lexicon "which"   = [Cat "which" "REL" [Neutr] [], 
-                     Cat "which" "DET" [Wh]    []]
-
-lexicon "snowwhite"    = 
- [Cat "snowwhite"  "NP" [Thrd,Fem,Sg]  []]
-lexicon "alice"        = 
- [Cat "alice"      "NP" [Thrd,Fem,Sg]  []]
-lexicon "dorothy"      = 
- [Cat "dorothy"    "NP" [Thrd,Fem,Sg]  []]
-lexicon "goldilocks"   = 
- [Cat "goldilocks" "NP" [Thrd,Fem,Sg]  []]
-lexicon "littlemook"   = 
- [Cat "littlemook" "NP" [Thrd,Masc,Sg] []]
-lexicon "atreyu"       = 
- [Cat "atreyu"     "NP" [Thrd,Masc,Sg] []]
-
-lexicon "every"   = [Cat "every"   "DET" [Sg]  []]
-lexicon "all"     = [Cat "all"     "DET" [Pl]  []]
-lexicon "some"    = [Cat "some"    "DET" []    []]
-lexicon "several" = [Cat "several" "DET" [Pl]  []]
-lexicon "a"       = [Cat "a"       "DET" [Sg]  []]
-lexicon "no"      = [Cat "no"      "DET" []    []]
-lexicon "the"     = [Cat "the"     "DET" []    []]
-
-lexicon "most"    = [Cat "most"    "DET" [Pl]  []]
-lexicon "many"    = [Cat "many"    "DET" [Pl]  []]
-lexicon "few"     = [Cat "few"     "DET" [Pl]  []]
-lexicon "this"    = [Cat "this"    "DET" [Sg]  []]
-lexicon "these"   = [Cat "these"   "DET" [Pl]  []]
-lexicon "those"   = [Cat "those"   "DET" [Pl]  []]
-
-lexicon "less_than" = [Cat "less_than" "DF" [Pl] []]
-lexicon "more_than" = [Cat "more_than" "DF" [Pl] []]
-
-lexicon "thing"   = [Cat "thing"   "CN" [Sg,Neutr,Thrd] []]
-lexicon "things"  = [Cat "things"  "CN" [Pl,Neutr,Thrd] []]
-lexicon "person"  = [Cat "person"  "CN" [Sg,Masc,Thrd]  []]
-lexicon "persons" = [Cat "persons" "CN" [Pl,Masc,Thrd]  []]
-lexicon "boy"     = [Cat "boy"     "CN" [Sg,Masc,Thrd]  []]
-lexicon "boys"    = [Cat "boys"    "CN" [Pl,Masc,Thrd]  []]
-lexicon "man"     = [Cat "man"     "CN" [Sg,Masc,Thrd]  []]
-lexicon "men"     = [Cat "men"     "CN" [Pl,Masc,Thrd]  []]
-lexicon "girl"    = [Cat "girl"    "CN" [Sg,Fem,Thrd]   []]
-lexicon "girls"   = [Cat "girls"   "CN" [Pl,Fem,Thrd]   []]
-lexicon "woman"   = [Cat "woman"   "CN" [Sg,Fem,Thrd]   []]
-lexicon "women"   = [Cat "women"   "CN" [Pl,Fem,Thrd]   []]
-lexicon "princess" = [Cat "princess" "CN" [Sg,Fem,Thrd] []]
-lexicon "princesses" = [Cat "princesses" "CN" [Pl,Fem,Thrd] []]
-lexicon "dwarf"    = [Cat "dwarf"    "CN" [Sg,Masc,Thrd] []]
-lexicon "dwarfs"   = [Cat "dwarfs"   "CN" [Pl,Masc,Thrd] []]
-lexicon "dwarves"  = [Cat "dwarves"  "CN" [Pl,Masc,Thrd] []]
-lexicon "giant"    = [Cat "giant"    "CN" [Sg,Masc,Thrd] []]
-lexicon "giants"   = [Cat "giants"   "CN" [Pl,Masc,Thrd] []]
-
-lexicon "wizard"   = [Cat "wizard"   "CN" [Sg,Masc,Thrd]  []]
-lexicon "wizards"  = [Cat "wizards"  "CN" [Pl,Masc,Thrd]  []]
-lexicon "sword"    = [Cat "sword"    "CN" [Sg,Neutr,Thrd] []]
-lexicon "swords"   = [Cat "swords"   "CN" [Pl,Neutr,Thrd] []]
-lexicon "dagger"   = [Cat "dagger"   "CN" [Sg,Neutr,Thrd] []]
-lexicon "daggers"  = [Cat "daggers"  "CN" [Pl,Neutr,Thrd] []]
-
-lexicon "did"    = [Cat "did"    "AUX" [] []]
-lexicon "didn't" = [Cat "didn't" "AUX" [] []]
-
-lexicon "smiled"    = [Cat "smiled"    "VP" [Tense] []]
-lexicon "smile"     = [Cat "smile"     "VP" [Infl]  []]
-lexicon "laughed"   = [Cat "laughed"   "VP" [Tense] []]
-lexicon "laugh"     = [Cat "laugh"     "VP" [Infl]  []]
-lexicon "cheered"   = [Cat "cheered"   "VP" [Tense] []]
-lexicon "cheer"     = [Cat "cheer"     "VP" [Infl]  []]
-lexicon "shuddered" = [Cat "shuddered" "VP" [Tense] []]
-lexicon "shudder"   = [Cat "shudder"   "VP" [Infl]  []]
-
-lexicon "loved"        = 
- [Cat "loved"    "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
-lexicon "love"         = 
- [Cat "love"     "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]]
-lexicon "admired"      = 
- [Cat "admired"  "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
-lexicon "admire"       = 
- [Cat "admire"   "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]]
-
-lexicon "helped"       = 
- [Cat "helped"   "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
-lexicon "help"         = 
- [Cat "help"     "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]]
-lexicon "defeated"       = 
- [Cat "defeated" "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
-lexicon "defeat"         = 
- [Cat "defeat"   "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]]
-
-lexicon "gave"         = 
- [Cat "gave" "VP" [Tense] [Cat "_" "NP" [AccOrDat] [],
-                           Cat "_" "PP" [To]       []], 
-  Cat "gave" "VP" [Tense] [Cat "_" "NP" [AccOrDat] [],
-                           Cat "_" "NP" [AccOrDat]  []]]
-lexicon "give"         = 
- [Cat "give" "VP" [Infl]  [Cat "_" "NP" [AccOrDat] [],
-                           Cat "_" "PP" [To]       []],
-  Cat "give" "VP" [Infl]  [Cat "_" "NP" [AccOrDat] [],
-                           Cat "_" "NP" [AccOrDat] []]]
-lexicon "sold" = 
- [Cat "sold" "VP" [Tense] [Cat "_" "NP" [AccOrDat] [],
-                           Cat "_" "PP" [To]       []],
-  Cat "sold" "VP" [Tense] [Cat "_" "NP" [AccOrDat] [],
-                           Cat "_" "NP" [AccOrDat] []]]
-lexicon "sell" = 
- [Cat "sell" "VP" [Infl]  [Cat "_" "NP" [AccOrDat] [],
-                           Cat "_" "PP" [To]       []],
-  Cat "sell" "VP" [Infl]  [Cat "_" "NP" [AccOrDat] [],
-                           Cat "_" "NP" [AccOrDat] []]]
-
-lexicon "kicked" = 
- [Cat "kicked" "VP" [Tense] [Cat "_" "NP" [AccOrDat] [],
-                             Cat "_" "PP" [With]     []], 
-  Cat "kicked" "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
-lexicon "kick" = 
- [Cat "kick"   "VP" [Infl]  [Cat "_" "NP" [AccOrDat] [],
-                             Cat "_" "PP" [With]     []], 
-  Cat "kick"   "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]] 
-
-lexicon "took" = 
- [Cat "took" "VP" [Tense] [Cat "_" "NP" [AccOrDat] [],
-                           Cat "_" "PP" [From]     []], 
-  Cat "took" "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
-lexicon "take" = 
- [Cat "take" "VP" [Infl]  [Cat "_" "NP" [AccOrDat] [],
-                           Cat "_" "PP" [From]     []], 
-  Cat "take" "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]] 
-
-lexicon "on"   = [Cat "on"   "PREP" [On]   []]
-lexicon "with" = [Cat "with" "PREP" [With] []]
-lexicon "by"   = [Cat "by"   "PREP" [By]   []]
-lexicon "to"   = [Cat "to"   "PREP" [To]   []]
-lexicon "from" = [Cat "from" "PREP" [From] []]
-
-lexicon "and"   = [Cat "and"  "CONJ" [] []]
-lexicon "."     = [Cat "."    "CONJ" [] []]
-lexicon "if"    = [Cat "if"   "COND" [] []]
-lexicon "then"  = [Cat "then" "THEN" [] []]
-
-lexicon _ = []
 
 scan :: String -> String
 scan []                      = []
 scan (x:xs) | x `elem` ".,?" = ' ':x:scan xs
             | otherwise      =     x:scan xs
 
-type Words = [String]
 
 lexer :: String -> Words 
 lexer = preproc . words . (map toLower) . scan
@@ -741,9 +523,7 @@ prs string = let ws = lexer string
      in  [ s | catlist <- collectCats lexicon ws, 
                (s,[])  <- parseSent catlist ]
 
-type StackParser a b = [a] -> [a] -> [(b,[a],[a])]
 
-type SPARSER a b = StackParser a (ParseTree a b)
 
 infixr 4 <||>
 
@@ -946,45 +726,6 @@ testSuite2 =
    "Dorothy admired the girl that " 
     ++ "Atreyu helped the princess that gave the sword to" ]
 
-data Term = Const String | Var Int deriving (Eq,Ord)
-
-data GQ = Sm | All | Th | Most | Many | Few 
-        deriving (Eq,Show,Ord) 
-
-data Abstract = MkAbstract Int LF deriving (Eq,Ord) 
-
-data LF = Rel String [Term] 
-        | Eq   Term Term
-        | Neg  LF 
-        | Impl LF LF 
-        | Equi LF LF 
-        | Conj [LF]
-        | Disj [LF] 
-        | Qt GQ Abstract Abstract 
-     deriving (Eq,Ord)
-
-instance Show Term where
-  show (Const name) = name 
-  show (Var i)      = 'x': show i
-
-instance Show Abstract where 
-  show (MkAbstract i lf) = 
-   "(\\ x" ++ show i ++ " " ++ show lf ++ ")"
-
-instance Show LF where
-  show (Rel r args)   = r ++ show args
-  show (Eq t1 t2)     = show t1 ++ "==" ++ show t2
-  show (Neg lf)       = '~': (show lf)
-  show (Impl lf1 lf2) = "(" ++ show lf1 ++ "==>" 
-                            ++ show lf2 ++ ")"
-  show (Equi lf1 lf2) = "(" ++ show lf1 ++ "<=>" 
-                            ++ show lf2 ++ ")"
-  show (Conj [])      = "true" 
-  show (Conj lfs)     = "conj" ++ concat [ show lfs ]
-  show (Disj [])      = "false" 
-  show (Disj lfs)     = "disj" ++ concat [ show lfs ]
-  show (Qt gq a1 a2)   = show gq ++ (' ' : show a1) 
-                                 ++ (' ' : show a2)
 
 transS :: ParseTree Cat Cat -> LF
 transS (Branch (Cat _ "S" _ _) [np,vp]) = 

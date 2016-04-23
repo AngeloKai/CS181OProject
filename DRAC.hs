@@ -9,6 +9,10 @@ module DRAC where
 import Data.List
 import Model
 import P hiding (person)
+import P_Type
+import StringToEntityPredicate
+import DRAC_Type
+
 
 sum1 :: Int -> Int 
 sum1 x = x + 1
@@ -39,22 +43,22 @@ add = sum2 . sum1
 -- Branch (Cat "_" "VP" [Tense] [] ) [Leaf (Cat "laughed"   "VP" [Tense] [])] ]
 
 
---treeToSent :: [ParseTree Cat Cat] -> Sent
---treeToSent [Branch (Cat _ "S" ls [] ) rest ] = treeToSent rest
---treeToSent [ Leaf (Cat np "NP" ls [] ), Branch (Cat _ "VP" ls2 [] ) vp ] = 
+-- treeToSent :: [ParseTree Cat Cat] -> Sent
+-- treeToSent [Branch (Cat _ "S" ls [] ) rest ] = treeToSent rest
+-- treeToSent [ Leaf (Cat np "NP" ls [] ), Branch (Cat _ "VP" ls2 [] ) vp ] = 
 --  Sent (treeToNP [Leaf (Cat np "NP" ls [] )] ) (treeToVP vp)
---treeToSent [ Branch (Cat _ "NP" ls [] ) np , Branch (Cat __ "VP" ls2 [] ) vp ] =
+-- treeToSent [ Branch (Cat _ "NP" ls [] ) np , Branch (Cat __ "VP" ls2 [] ) vp ] =
 --  Sent (treeToNP np) (treeToVP vp)
 
 
 
---treeToNP :: [ParseTree Cat Cat] -> NP
---treeToNP [ Leaf (Cat np "NP" ls [] ) ] = np
---treeToNP [ Leaf (Cat det "DET" ls [] ), Leaf (Cat cn "CN" ls2 []) ] = NP1 det cn
+-- treeToNP :: [ParseTree Cat Cat] -> NP
+-- treeToNP [ Leaf (Cat np "NP" ls [] ) ] = np
+-- treeToNP [ Leaf (Cat det "DET" ls [] ), Leaf (Cat cn "CN" ls2 []) ] = NP1 det cn
 
---treeToVP :: [ParseTree Cat Cat] -> VP
---treeToVP [ Leaf (Cat vp "VP" ls []) ] = vp
---treeToVP [ Leaf (Cat tv "TV" ls []), vp] = VP1 tv (treeToNP vp)
+-- treeToVP :: [ParseTree Cat Cat] -> VP
+-- treeToVP [ Leaf (Cat vp "VP" ls []) ] = vp
+-- treeToVP [ Leaf (Cat tv "TV" ls []), vp] = VP1 tv (treeToNP vp)
 
 
 --treeToVP :: ParseTree Cat Cat -> VP
@@ -127,11 +131,6 @@ add = sum2 . sum1
 --                                  ++ prsYN  [] catlist   
 --                                  ++ prsWH  [] catlist ]
 
-type Context = [Entity]
-type Prop    = [Context]
-type Trans   = Context -> Prop
-type Idx     = Int
-
 lookupIdx :: Context -> Idx -> Entity 
 lookupIdx []     i = error "undefined context element"
 lookupIdx (x:xs) 0 = x
@@ -164,62 +163,6 @@ anchor = \ e c -> anchor' e c 0 where
   anchor' e (x:xs) i | e == x    = i 
                      | otherwise = anchor' e xs (i+1)
 
-name2entity :: String -> Entity
-name2entity "snowwhite"  = snowWhite
-name2entity "alice"      = alice 
-name2entity "dorothy"    = dorothy 
-name2entity "goldilocks" = goldilocks 
-name2entity "littlemook" = littleMook
-name2entity "atreyu"     = atreyu 
-
-name2pred :: String -> OnePlacePred
-name2pred "laugh"     = laugh
-name2pred "laughed"   = laugh
-name2pred "cheer"     = cheer
-name2pred "cheered"   = cheer
-name2pred "shudder"   = shudder 
-name2pred "shuddered" = shudder 
-
-name2pred "thing"      = thing 
-name2pred "things"     = thing
-name2pred "person"     = person
-name2pred "persons"    = person
-name2pred "boy"        = boy 
-name2pred "boys"       = boy 
-name2pred "man"        = man
-name2pred "men"        = man
-name2pred "girl"       = girl
-name2pred "girls"      = girl
-name2pred "woman"      = woman
-name2pred "women"      = woman
-name2pred "princess"   = princess
-name2pred "princesses" = princess
-
-name2pred "dwarf"      = dwarf
-name2pred "dwarfs"     = dwarf
-name2pred "dwarves"    = dwarf
-name2pred "giant"      = giant
-name2pred "giants"     = giant
-name2pred "wizard"     = wizard
-name2pred "wizards"    = wizard
-name2pred "sword"      = sword
-name2pred "swords"     = sword
-name2pred "dagger"     = dagger
-name2pred "daggers"    = dagger
-
-name2binpred :: String -> TwoPlacePred
-name2binpred "love"     = love
-name2binpred "loved"    = love
-name2binpred "admire"   = admire
-name2binpred "admired"  = admire
-name2binpred "help"     = help 
-name2binpred "helped"   = help 
-name2binpred "defeat"   = defeat
-name2binpred "defeated" = defeat
-
-name2terpred :: String -> ThreePlacePred
-name2terpred "give" = give 
-name2terpred "gave" = give 
 
 blowupPred :: OnePlacePred -> Idx -> Trans
 blowupPred = \ pred i c -> if   pred (lookupIdx c i) 
@@ -336,41 +279,6 @@ prc string = map evl (parses string)
 
 lift :: Trans -> Context -> (Context -> Bool) -> Bool
 lift phi c p = any p (phi c)
-
-data Sent = Sent NP VP | If Sent Sent | Txt Sent Sent
-          deriving (Eq,Show)
-data NP   = SnowWhite  | Alice | Dorothy | Goldilocks 
-          | LittleMook | Atreyu
-          | PRO Idx    | He | She | It
-          | NP1 DET CN | NP2 DET RCN 
-          deriving (Eq,Show)
-data DET  = Every | Some | No | The 
-          deriving (Eq,Show)
-data CN   = Girl   | Boy    | Princess | Dwarf | Giant 
-          | Wizard | Sword  | Poison 
-          deriving (Eq,Show) 
-data RCN  = RCN1 CN That VP | RCN2 CN That NP TV
-          deriving (Eq,Show)
-data That = That deriving (Eq,Show)
-data REFL = Self deriving (Eq,Show)
-
-data VP   = Laughed | Cheered | Shuddered 
-          | VP1 TV NP    | VP2 TV REFL 
-          | VP3 DV NP NP | VP4 DV REFL NP 
-          | VP5 AUX INF  
-          deriving (Eq,Show) 
-data TV   = Loved   | Admired | Helped | Defeated
-          deriving (Eq,Show)
-data DV   = Gave deriving (Eq,Show)
-
-data AUX  = DidNot deriving (Eq,Show) 
-
-data INF  = Laugh | Cheer  | Shudder 
-          | INF1  TINF NP  | INF2  DINF NP NP 
-          deriving (Eq,Show) 
-data TINF = Love  | Admire | Help | Defeat 
-          deriving (Eq,Show) 
-data DINF = Give deriving (Eq,Show) 
 
 intS :: Sent -> Trans
 intS (Sent np vp) = (intNP np) (intVP vp)
@@ -491,28 +399,28 @@ ex18 = Sent (NP1 The  Boy)  (VP1 Loved SnowWhite)
 ex21 = Sent (NP1 Some Girl) (VP2 Admired Self)
 ex22 = Sent (NP1 No   Boy)  (VP2 Admired Self)
 
-data Constraint = C1 VP Idx 
-                | C2 TV Idx Idx 
-                | C3 DV Idx Idx Idx
-                | C4 VP Idx 
-                | C5 TV Idx Idx 
-                | C6 DV Idx Idx Idx
-                deriving Eq
+-- data Constraint = C1 VP Idx 
+--                 | C2 TV Idx Idx 
+--                 | C3 DV Idx Idx Idx
+--                 | C4 VP Idx 
+--                 | C5 TV Idx Idx 
+--                 | C6 DV Idx Idx Idx
+--                 deriving Eq
 
-instance Show Constraint where 
-  show (C1 vp i)     = show vp ++ (' ':show i)
-  show (C2 tv i j)   = show tv ++ (' ':show i) 
-                               ++ (' ':show j)
-  show (C3 dv i j k) = show dv ++ (' ':show i) 
-                               ++ (' ':show j) 
-                               ++ (' ':show k)
+-- instance Show Constraint where 
+--   show (C1 vp i)     = show vp ++ (' ':show i)
+--   show (C2 tv i j)   = show tv ++ (' ':show i) 
+--                                ++ (' ':show j)
+--   show (C3 dv i j k) = show dv ++ (' ':show i) 
+--                                ++ (' ':show j) 
+--                                ++ (' ':show k)
 
-  show (C4 vp i)     = '-':show vp ++ (' ':show i)
-  show (C5 tv i j)   = '-':show tv ++ (' ':show i) 
-                                   ++ (' ':show j)
-  show (C6 dv i j k) = '-':show dv ++ (' ':show i) 
-                                   ++ (' ':show j) 
-                                   ++ (' ':show k)
+--   show (C4 vp i)     = '-':show vp ++ (' ':show i)
+--   show (C5 tv i j)   = '-':show tv ++ (' ':show i) 
+--                                    ++ (' ':show j)
+--   show (C6 dv i j k) = '-':show dv ++ (' ':show i) 
+--                                    ++ (' ':show j) 
+--                                    ++ (' ':show k)
 
 maxIndex  :: Constraint -> Idx
 maxIndex (C1 vp i)     = i
