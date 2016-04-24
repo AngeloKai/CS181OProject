@@ -7,12 +7,14 @@
 module DRAC where 
 
 import Data.List
+import Data.Char
 import Model
 import P hiding (person)
 import P_Type
 import StringToEntityPredicate
 import DRAC_Type
 import SentEx
+import SentConvert
 
 sum1 :: Int -> Int 
 sum1 x = x + 1
@@ -20,10 +22,19 @@ sum1 x = x + 1
 sum2 :: Int -> Int 
 sum2 x = x * 2
 
+add :: Int -> Int
 add = sum2 . sum1 
 
---parseEval :: String -> Prop'
---parseEval = eval' . treeToSent . parses
+-- Check if a string is an integer 
+stringIsInt :: String -> Bool
+stringIsInt = all isDigit
+
+strToLower :: String -> String
+strToLower str = map toLower str
+
+
+parseEval :: String -> Prop'
+parseEval = eval' . treeToSent . parses
 
 --[
 --[.S[Thrd,Fem,Sg] 
@@ -43,18 +54,35 @@ add = sum2 . sum1
 -- Branch (Cat "_" "VP" [Tense] [] ) [Leaf (Cat "laughed"   "VP" [Tense] [])] ]
 
 
--- treeToSent :: [ParseTree Cat Cat] -> Sent
--- treeToSent [Branch (Cat _ "S" ls [] ) rest ] = treeToSent rest
--- treeToSent [ Leaf (Cat np "NP" ls [] ), Branch (Cat _ "VP" ls2 [] ) vp ] = 
---  Sent (treeToNP [Leaf (Cat np "NP" ls [] )] ) (treeToVP vp)
+treeToSent :: [ParseTree Cat Cat] -> Sent
+treeToSent [Branch (Cat _ "S" ls [] ) rest ] = treeToSent rest
+treeToSent [ Leaf (Cat np "NP" ls [] ), Branch (Cat _ "VP" ls2 [] ) vp ] = 
+  Sent (treeToNP [Leaf (Cat np "NP" ls [] )] ) (treeToVP vp)
 -- treeToSent [ Branch (Cat _ "NP" ls [] ) np , Branch (Cat __ "VP" ls2 [] ) vp ] =
---  Sent (treeToNP np) (treeToVP vp)
+--   Sent (treeToNP np) (treeToVP vp)
+
+treeToNP :: [ParseTree Cat Cat] -> NP
+treeToNP [ Leaf (Cat npPhon "NP" ls [] ) ] =
+  if (stringIsInt npPhon) 
+    then   PRO (read npPhon)
+    else   case (strToLower npPhon) of "snowwhite"   -> SnowWhite
+                                       "alice"       -> Alice
+                                       "dorothy"     -> Dorothy
+                                       "goldilocks"  -> Goldilocks
+                                       "littlemook"  -> LittleMook
+                                       "atreyu"      -> Atreyu
+                                       "he"          -> He
+                                       "she"         -> She
+                                       "it"          -> It
+treeToNP [ Leaf (Cat det "DET" ls [] ), Leaf (Cat cnPhon "CN" ls2 []) ] = NP1 (stringToDet (strToLower det)) (stringToCN (strToLower cnPhon))
+-- treeToNP [ Leaf (Cat det "DET" ls []), Leaf (Cat rcn "RCN" ls2 []) ] = NP2 (stringToDet (strToLower det)) (treeToRCN (strToLower rcn))
 
 
+treeToVP :: [ParseTree Cat Cat] -> VP
+treeToVP [ Leaf (Cat vp "VP" ls []) ] = (stringToVP vp)
+treeToVP [ Leaf (Cat tv "TV" ls []), vp] = VP1 (stringToTV tv) (treeToNP [vp])
 
--- treeToNP :: [ParseTree Cat Cat] -> NP
--- treeToNP [ Leaf (Cat np "NP" ls [] ) ] = np
--- treeToNP [ Leaf (Cat det "DET" ls [] ), Leaf (Cat cn "CN" ls2 []) ] = NP1 det cn
+
 
 -- treeToVP :: [ParseTree Cat Cat] -> VP
 -- treeToVP [ Leaf (Cat vp "VP" ls []) ] = vp
