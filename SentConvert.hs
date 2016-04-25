@@ -8,6 +8,14 @@ import P_Type
 import StringToEntityPredicate
 import DRAC_Type
 
+
+
+-- The isInfixOf function takes two lists and returns True iff the first list is contained, wholly and intact, anywhere within the second.
+stringToREFL :: String -> REFL
+stringToREFL str = if (isInfixOf "self" str)
+                    then Self
+                    else error (str ++ " is not a self reference")
+
 stringToDET :: String -> DET
 stringToDET "every" = Every
 stringToDET "some"  = Some
