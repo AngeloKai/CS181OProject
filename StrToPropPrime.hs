@@ -89,6 +89,16 @@ treeToVP :: [ParseTree Cat Cat] -> VP
 treeToVP [ Leaf (Cat vp "VP" ls []) ] = (stringToVP vp)
 treeToVP [ Leaf (Cat tv "TV" ls []), vp] = VP1 (stringToTV tv) (treeToNP [vp])
 treeToVP [ Branch (Cat "_" "VP" _ _) rest] = treeToVP rest
+treeToVP ( Leaf (Cat auxPhon "AUX" _ _) : rest) = VP5 (stringToAUX auxPhon) (treeToINF rest)
+
+-- No need to worry about case issue since verbs are suppposed to be lower
+-- case in this grammar. 
+treeToINF :: [ParseTree Cat Cat] -> INF 
+treeToINF [Branch vpSign [Leaf (Cat infPhon _ _ _)]] = (stringToINF infPhon) 
+treeToINF [Branch vpSign [Leaf (Cat tinfPhon _ _ _), np1]] = INF1 (stringToTINF tinfPhon) (treeToNP [np1]) 
+treeToINF [Branch vpSign [Leaf (Cat "give" _ _ _), np1, np2]] = INF2 Give (treeToNP [np1]) (treeToNP [np2])
+
+
 
 
 -- treeToVP :: [ParseTree Cat Cat] -> VP
