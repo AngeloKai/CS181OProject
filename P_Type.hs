@@ -33,11 +33,16 @@ type Words = [String]
 data ParseTree a b =  Ep | Leaf a | Branch b [ParseTree a b] 
                    deriving (Eq, Read)
 
+-- instance (Show a, Show b) => Show (ParseTree a b) where
+--   show Ep            = "[]"
+--   show (Leaf t)      = show t
+--   show (Branch l ts) = "[." ++ show l  ++ " " 
+--                             ++ show ts ++ "]"
 instance (Show a, Show b) => Show (ParseTree a b) where
-  show Ep            = "[]"
-  show (Leaf t)      = show t
-  show (Branch l ts) = "[." ++ show l  ++ " " 
-                            ++ show ts ++ "]"
+  show Ep            = "Ep"
+  show (Leaf t)      = "Leaf " ++ show t
+  show (Branch l ts) = "Branch " ++ show l  ++ " " 
+                                ++ show ts
 
 
 -- Section 9.4, Features and Categories
@@ -54,10 +59,14 @@ data Feat = Masc  | Fem  | Neutr | MascOrFem
 data Cat      = Cat Phon CatLabel Agreement [Cat]
               deriving (Eq, Read)
 
+-- instance Show Cat where
+--   show (Cat "_"  label agr subcatlist) = label ++ show agr
+--   show (Cat phon label agr subcatlist) = phon  ++ " " 
+--                                                ++ label ++ show agr
 instance Show Cat where
-  show (Cat "_"  label agr subcatlist) = label ++ show agr
-  show (Cat phon label agr subcatlist) = phon  ++ " " 
-                                               ++ label ++ show agr
+  show (Cat "_"  label agr subcatlist) = "(Cat " ++ label ++ show agr ++ " )"
+  show (Cat phon label agr subcatlist) = "(Cat " ++ phon  ++ " " ++ label 
+                                                 ++ " " ++ show agr ++ " )"
 
 
 data Term = Const String | Var Int deriving (Eq,Ord)

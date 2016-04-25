@@ -8,11 +8,11 @@ import P_Type
 import StringToEntityPredicate
 import DRAC_Type
 
-stringToDet :: String -> DET
-stringToDet "every" = Every
-stringToDet "some"  = Some
-stringToDet "no"    = No
-stringToDet "the"   = The 
+stringToDET :: String -> DET
+stringToDET "every" = Every
+stringToDET "some"  = Some
+stringToDET "no"    = No
+stringToDET "the"   = The 
 
 stringToCN :: String -> CN 
 stringToCN "girl"     = Girl

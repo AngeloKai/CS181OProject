@@ -26,13 +26,15 @@ data NP   = SnowWhite  | Alice | Dorothy | Goldilocks
           | NP1 DET CN | NP2 DET RCN 
           deriving (Eq,Show,Read)
 
+data RCN  = RCN1 CN That VP | RCN2 CN That NP TV
+          deriving (Eq,Show,Read)
+
 data DET  = Every | Some | No | The 
           deriving (Eq,Show,Read)
 data CN   = Girl   | Boy    | Princess | Dwarf | Giant 
           | Wizard | Sword  | Poison 
           deriving (Eq,Show,Read) 
-data RCN  = RCN1 CN That VP | RCN2 CN That NP TV
-          deriving (Eq,Show,Read)
+
 data That = That deriving (Eq,Show,Read)
 data REFL = Self deriving (Eq,Show,Read)
 
