@@ -93,10 +93,12 @@ treeToVP [ Leaf (Cat vp "VP" ls []), Leaf (Cat npPhon "NP" attrs catArr)] =
     else VP1 (stringToTV (strToLower vp)) (treeToNP [Leaf (Cat npPhon "NP" attrs catArr)])
 treeToVP [ Leaf (Cat vp "VP" ls []), Branch (Cat npPhon "NP" attrs catArr) rest ] = 
   VP1 (stringToTV (strToLower vp)) (treeToNP [Branch (Cat npPhon "NP" attrs catArr) rest])
--- treeToVP [ Leaf (Cat tv "TV" ls []), vp] = VP1 (stringToTV tv) (treeToNP [vp])
--- treeToVP [ Branch (Cat "_" "VP" _ _) rest] = treeToVP rest
+treeToVP [Leaf (Cat vp "VP" ls []), Leaf (Cat npPhon "NP" attrs catArr), np2] = 
+  if (any (Refl ==) attrs) 
+    then VP4 (stringToDV vp) (stringToREFL npPhon) (treeToNP [np2])
+    else VP3 (stringToDV vp) (treeToNP [Leaf (Cat npPhon "NP" attrs catArr)]) (treeToNP [np2])
+treeToVP [Leaf (Cat vp "VP" ls []), np1, np2] = VP3 (stringToDV vp) (treeToNP [np1]) (treeToNP [np2])
 treeToVP ( Leaf (Cat auxPhon "AUX" _ _) : rest) = VP5 (stringToAUX auxPhon) (treeToINF rest)
-
 
 -- No need to worry about case issue since verbs are suppposed to be lower
 -- case in this grammar. 
