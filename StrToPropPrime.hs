@@ -31,32 +31,19 @@ strToLower = map toLower
 parseEval :: String -> Prop'
 parseEval = eval' . treeToSent . parses
 
---[
---[.S[Thrd,Fem,Sg] 
---[alice NP[Fem,Sg,Thrd,Nom],
---[.VP[Tense] [admired VP[Tense],dorothy NP[Thrd,Fem,Sg]]]
---]
---]]
--- = [Branch "S"
---  [Branch "NP" [Leaf "alice"],
---  Branch "VP" [Branch "TV" [Leaf "admired"],
---              [Branch "NP" [Leaf "dorothy"]]]
---  ]
---  ]
-
--- snowwhite3 :: ParseTree Cat Cat 
--- snowwhite3 = Branch (Cat "_" "S" [] []) [ Leaf (Cat "snowwhite" "NP" [Thrd, Fem, Sg] []), 
--- Branch (Cat "_" "VP" [Tense] [] ) [Leaf (Cat "laughed"   "VP" [Tense] [])] ]
-
 
 treeToSent :: [ParseTree Cat Cat] -> Sent
 treeToSent [Branch (Cat _ "S" ls _ ) rest ] = treeToSent rest
-treeToSent [Leaf (Cat np "NP" ls catArray ), Branch (Cat _ "VP" ls2 _ ) vp ] = 
-  Sent (treeToNP [Leaf (Cat np "NP" ls catArray )] ) (treeToVP vp)
-treeToSent [ Branch (Cat _ "NP" ls _ ) np , Branch (Cat __ "VP" ls2 _ ) vp ] =
-  Sent (treeToNP np) (treeToVP vp)
+treeToSent [npOfSent, vpOfSent ] = 
+  Sent (treeToNP [npOfSent] ) (treeToVP [vpOfSent])
+treeToSent [Leaf (Cat "if" "COND" _ _), sent1, sent2] = If (treeToSent [sent1]) (treeToSent [sent2])
+treeToSent [Branch (Cat _ "TXT" _ _) [sent1, conj, sent2]] = Txt (treeToSent [sent1]) (treeToSent [sent2])
+-- treeToSent [ Branch (Cat _ "NP" ls _ ) np , Branch (Cat __ "VP" ls2 _ ) vp ] =
+--   Sent (treeToNP np) (treeToVP vp)
+
 
 treeToNP :: [ParseTree Cat Cat] -> NP
+treeToNP [Branch (Cat "_" "NP" _ _) rest] = treeToNP rest
 treeToNP [ Leaf (Cat npPhon "NP" ls _ ) ] =
   if (stringIsInt npPhon) 
     then   PRO (read npPhon)
@@ -86,6 +73,7 @@ treeToTV [Leaf (Cat tvPhon "VP" _ _), Leaf (Cat "#" "NP" _ _)] = stringToTV (str
 
 
 treeToVP :: [ParseTree Cat Cat] -> VP
+treeToVP [ Branch (Cat "_" "VP" _ _) rest] = treeToVP rest
 treeToVP [ Leaf (Cat vp "VP" ls []) ] = (stringToVP vp)
 treeToVP [ Leaf (Cat vp "VP" ls []), Leaf (Cat npPhon "NP" attrs catArr)] = 
   if (any (Refl ==) attrs) 
@@ -106,82 +94,3 @@ treeToINF :: [ParseTree Cat Cat] -> INF
 treeToINF [Branch vpSign [Leaf (Cat infPhon _ _ _)]] = (stringToINF infPhon) 
 treeToINF [Branch vpSign [Leaf (Cat tinfPhon _ _ _), np1]] = INF1 (stringToTINF tinfPhon) (treeToNP [np1]) 
 treeToINF [Branch vpSign [Leaf (Cat "give" _ _ _), np1, np2]] = INF2 Give (treeToNP [np1]) (treeToNP [np2])
-
-
-
-
--- treeToVP :: [ParseTree Cat Cat] -> VP
--- treeToVP [ Leaf (Cat vp "VP" _ _) ] = vp
--- treeToVP [ Leaf (Cat tv "TV" _ _), vp] = VP1 tv (treeToNP vp)
-
-
-
---treeToVP :: ParseTree Cat Cat -> VP
---treeToVP (Leaf vp) = vp
---treeToVP (Branch "TV" [Leaf tv], np) = VP1 tv (treeToNP np)
---treeToVP (Branch "TV" [Leaf tv], Branch "REFL" [Leaf refl]) = VP2 tv refl
-
-
--- treeToSent :: [ParseTree Cat Cat] -> Sent
--- treeToSent [Branch "S" rest ] = Sent treeToSent rest
--- treeToSent [Branch "NP" np, Branch "VP" vp] = Sent (treeToNP np) (treeToVP vp)
-
-
--- treeToSent [Branch "NP" [Leaf np], Branch "VP" [Branch "TV" [Leaf tv], [Branch "NP" [Leaf ]]]]
--- treeToSent [Branch "NP" [ParseTree a b]] = Sent np (treeToSent [ParseTree a b])
--- treeToSent [Ep] = Sent NULL NULL
--- treeToSent [Leaf a] = Sent a NULL
-
-
-
---data Sent = Sent NP VP | If Sent Sent | Txt Sent Sent
---          deriving (Eq,Show)
---data NP   = SnowWhite  | Alice | Dorothy | Goldilocks 
---          | LittleMook | Atreyu
---          | PRO Idx    | He | She | It
---          | NP1 DET CN | NP2 DET RCN 
---          deriving (Eq,Show)
---data DET  = Every | Some | No | The 
---          deriving (Eq,Show)
---data CN   = Girl   | Boy    | Princess | Dwarf | Giant 
---          | Wizard | Sword  | Poison 
---          deriving (Eq,Show) 
---data RCN  = RCN1 CN That VP | RCN2 CN That NP TV
---          deriving (Eq,Show)
---data That = That deriving (Eq,Show)
---data REFL = Self deriving (Eq,Show)
-
---data VP   = Laughed | Cheered | Shuddered 
---          | VP1 TV NP    | VP2 TV REFL 
---          | VP3 DV NP NP | VP4 DV REFL NP 
---          | VP5 AUX INF  
---          deriving (Eq,Show) 
---data TV   = Loved   | Admired | Helped | Defeated
---          deriving (Eq,Show)
---data DV   = Gave deriving (Eq,Show)
-
---data AUX  = DidNot deriving (Eq,Show) 
-
---data INF  = Laugh | Cheer  | Shudder 
---          | INF1  TINF NP  | INF2  DINF NP NP 
---          deriving (Eq,Show) 
---data TINF = Love  | Admire | Help | Defeat 
---          deriving (Eq,Show) 
---data DINF = Give deriving (Eq,Show) 
-
---treeToSent [Branch "NP" rest] = treeToSent rest
-
---data Sent = Sent NP VP | If Sent Sent | Txt Sent Sent
---          deriving (Eq,Show)
-
--- eval' :: Sent -> Prop'
--- eval' s = intS' s (convert context) True
-
-
--- Parses can parse both single sentence or a block sentence" 
--- parses :: String -> [ParseTree Cat Cat]
--- parses str = let ws = lexer str 
---              in  [ s | catlist   <- collectCats lexicon ws, 
---                        (s,[],[]) <- prsTXT [] catlist  
---                                  ++ prsYN  [] catlist   
---                                  ++ prsWH  [] catlist ]
