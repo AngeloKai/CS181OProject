@@ -11,29 +11,15 @@ import SentEx
 import SentConvert
 import DRAC 
 
-sum1 :: Int -> Int 
-sum1 x = x + 1
-
-sum2 :: Int -> Int 
-sum2 x = x * 2
-
-add :: Int -> Int
-add = sum2 . sum1 
-
--- Check if a string is an integer 
-stringIsInt :: String -> Bool
-stringIsInt = all isDigit
-
-strToLower :: String -> String
-strToLower = map toLower
-
+-- SnowWhite laughed. No dwarf admired some princess that 
+-- shuddered. Every girl that some boy loved cheered. The
+-- wizard that helped Snow White defeated the giant. 
 
 parseEval :: String -> Prop'
 parseEval = eval' . treeToSent . parses
 
-
 treeToSent :: [ParseTree Cat Cat] -> Sent
-treeToSent [Branch (Cat _ "S" ls _ ) rest ] = treeToSent rest
+treeToSent [Branch (Cat _ "S" _ _ ) rest ] = treeToSent rest
 treeToSent [npOfSent, vpOfSent ] = 
   Sent (treeToNP [npOfSent] ) (treeToVP [vpOfSent])
 treeToSent [Leaf (Cat "if" "COND" _ _), sent1, sent2] = If (treeToSent [sent1]) (treeToSent [sent2])
@@ -44,7 +30,7 @@ treeToSent [Branch (Cat _ "TXT" _ _) [sent1, conj, sent2]] = Txt (treeToSent [se
 
 treeToNP :: [ParseTree Cat Cat] -> NP
 treeToNP [Branch (Cat "_" "NP" _ _) rest] = treeToNP rest
-treeToNP [ Leaf (Cat npPhon "NP" ls _ ) ] =
+treeToNP [ Leaf (Cat npPhon "NP" _ _ ) ] =
   if (stringIsInt npPhon) 
     then   PRO (read npPhon)
     else   case (strToLower npPhon) of "snowwhite"   -> SnowWhite
@@ -74,18 +60,18 @@ treeToTV [Leaf (Cat tvPhon "VP" _ _), Leaf (Cat "#" "NP" _ _)] = stringToTV (str
 
 treeToVP :: [ParseTree Cat Cat] -> VP
 treeToVP [ Branch (Cat "_" "VP" _ _) rest] = treeToVP rest
-treeToVP [ Leaf (Cat vp "VP" ls []) ] = (stringToVP vp)
-treeToVP [ Leaf (Cat vp "VP" ls []), Leaf (Cat npPhon "NP" attrs catArr)] = 
+treeToVP [ Leaf (Cat vp "VP" _ _) ] = (stringToVP vp)
+treeToVP [ Leaf (Cat vp "VP" _ _), Leaf (Cat npPhon "NP" attrs catArr)] = 
   if (any (Refl ==) attrs) 
     then VP2 (stringToTV (strToLower vp)) (stringToREFL npPhon)
     else VP1 (stringToTV (strToLower vp)) (treeToNP [Leaf (Cat npPhon "NP" attrs catArr)])
-treeToVP [ Leaf (Cat vp "VP" ls []), Branch (Cat npPhon "NP" attrs catArr) rest ] = 
+treeToVP [ Leaf (Cat vp "VP" _ _), Branch (Cat npPhon "NP" attrs catArr) rest ] = 
   VP1 (stringToTV (strToLower vp)) (treeToNP [Branch (Cat npPhon "NP" attrs catArr) rest])
-treeToVP [Leaf (Cat vp "VP" ls []), Leaf (Cat npPhon "NP" attrs catArr), np2] = 
+treeToVP [Leaf (Cat vp "VP" _ _), Leaf (Cat npPhon "NP" attrs catArr), np2] = 
   if (any (Refl ==) attrs) 
     then VP4 (stringToDV vp) (stringToREFL npPhon) (treeToNP [np2])
     else VP3 (stringToDV vp) (treeToNP [Leaf (Cat npPhon "NP" attrs catArr)]) (treeToNP [np2])
-treeToVP [Leaf (Cat vp "VP" ls []), np1, np2] = VP3 (stringToDV vp) (treeToNP [np1]) (treeToNP [np2])
+treeToVP [Leaf (Cat vp "VP" _ _), np1, np2] = VP3 (stringToDV vp) (treeToNP [np1]) (treeToNP [np2])
 treeToVP ( Leaf (Cat auxPhon "AUX" _ _) : rest) = VP5 (stringToAUX auxPhon) (treeToINF rest)
 
 -- No need to worry about case issue since verbs are suppposed to be lower
@@ -94,3 +80,13 @@ treeToINF :: [ParseTree Cat Cat] -> INF
 treeToINF [Branch vpSign [Leaf (Cat infPhon _ _ _)]] = (stringToINF infPhon) 
 treeToINF [Branch vpSign [Leaf (Cat tinfPhon _ _ _), np1]] = INF1 (stringToTINF tinfPhon) (treeToNP [np1]) 
 treeToINF [Branch vpSign [Leaf (Cat "give" _ _ _), np1, np2]] = INF2 Give (treeToNP [np1]) (treeToNP [np2])
+
+
+-------- Utilities Functions ----------
+-- Check if a string is an integer 
+stringIsInt :: String -> Bool
+stringIsInt = all isDigit
+
+-- Convert a string to lowercase 
+strToLower :: String -> String
+strToLower = map toLower

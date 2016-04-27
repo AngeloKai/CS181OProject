@@ -32,7 +32,7 @@ type Words = [String]
 -- A parse tree for English
 data ParseTree a b =  Ep | Leaf a | Branch b [ParseTree a b] 
                    deriving (Eq, Read)
-
+-- TODO: change the show instance part back 
 -- instance (Show a, Show b) => Show (ParseTree a b) where
 --   show Ep            = "[]"
 --   show (Leaf t)      = show t
