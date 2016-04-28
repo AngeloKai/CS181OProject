@@ -84,7 +84,6 @@ data INF  = Laugh | Cheer  | Shudder
           | INF1  TINF NP  | INF2  DINF NP NP 
           deriving (Eq,Show,Read) 
 data TINF = Love  | Admire | Help | Defeat 
-          deriving (Eq,Show,Read) 
 data DINF = Give deriving (Eq,Show,Read) 
 
 
