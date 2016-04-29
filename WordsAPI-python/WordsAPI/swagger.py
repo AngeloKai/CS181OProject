@@ -83,19 +83,36 @@ class ApiClient:
         else:
             raise Exception('Method ' + method + ' is not recognized.')
 
+        print url
+
+        url = "https://wordsapiv1.p.mashape.com/words/lovely/definitions?X-Mashape-Key=n4Ye8UfPWqmshLYGxmsdYcetqn6op1izWqojsnzFkaGBI5KiEA"
+
+        print url
+
         request = MethodRequest(method=method, url=url, headers=headers,
                                 data=data)
 
+        print  "hello1"
+
         # Make the request
         response = urllib2.urlopen(request)
+
+        print "hello2"
+
         if 'Set-Cookie' in response.headers:
             self.cookie = response.headers['Set-Cookie']
         string = response.read()
 
+        print "hello"
+
         try:
+            print "try data "
             data = json.loads(string)
         except ValueError:  # PUT requests don't return anything
+            print "value error data"
             data = string
+
+        print data
 
         return data
 
