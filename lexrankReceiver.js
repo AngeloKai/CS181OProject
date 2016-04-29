@@ -56,6 +56,8 @@ process.stdin.on('end', () => {
   process.stdout.write('\n');
 });
 
+// It is incredibly important to close readline. Otherwise, input doesn't 
+// get sent out. 
 rl.close();
 
 

@@ -18,39 +18,6 @@ type Trans'   = Context' -> Bool -> Prop'
 data Sent = Sent NP VP | If Sent Sent | Txt Sent Sent
           deriving (Eq,Show,Read)
 
---type NPGeneral = String
-
-
--- Deal with Sent 
--- 5 Question types 
--- The type of question we could support based on the current grammar: 
--- 1. What happens if ...?
--- 2. What could made ... happen?
-
--- For question such as what and who
--- If we neglect the object (object verb subject), 
---    what verb subject? 
---        If the verbs are just be-verbs (is, are), do nothing
---        else, change verb according to tense.
-
--- If we neglect the verbs in a sent like Object Verb, 
---    What does (change according to tense) object do?  
--- If we neglect the verbs in a sent like Object Verb Subject, 
---    What does (change according to tense) Object do to Subject? 
-
--- If we neglect the subject (if there's a subject)
--- What does (change according to tense) Object Verb?
---    e.g. He killed the birds. 
---    Q:   What did he kill? 
-
-
--- If we can support because (Sent1 because Sent2), we can support questions 
--- such as:
--- 1. Why Sent1? 
---    e.g. He loved her because her eyes shined. 
---         Why did he love her? 
---    Switch the Object, Verb, and the Subject 
-
 data NP   = SnowWhite  | Alice | Dorothy | Goldilocks 
           | LittleMook | Atreyu 
           | PRO Idx    | He | She | It

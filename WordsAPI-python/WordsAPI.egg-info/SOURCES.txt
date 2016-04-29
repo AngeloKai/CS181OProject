@@ -1,0 +1,13 @@
+setup.py
+WordsAPI/WordsApi.py
+WordsAPI/__init__.py
+WordsAPI/swagger.py
+WordsAPI.egg-info/PKG-INFO
+WordsAPI.egg-info/SOURCES.txt
+WordsAPI.egg-info/dependency_links.txt
+WordsAPI.egg-info/top_level.txt
+WordsAPI/models/Definition.py
+WordsAPI/models/DetailsResponse.py
+WordsAPI/models/Result.py
+WordsAPI/models/WordResponse.py
+WordsAPI/models/__init__.py
