@@ -178,6 +178,7 @@ intNP Alice      = \ p c -> p (anchor alice      c) c
 intNP Dorothy    = \ p c -> p (anchor dorothy    c) c
 intNP Goldilocks = \ p c -> p (anchor goldilocks c) c
 intNP LittleMook = \ p c -> p (anchor littleMook c) c
+intNP IsaacNewton= \ p c -> p (anchor isaacNewton c) c
 intNP (PRO i)    = \ p   -> p i 
 
 intNP (NP1 det cn)  = (intDET det) (intCN cn) 
@@ -187,6 +188,7 @@ intVP :: VP -> Idx -> Trans
 intVP Laughed          = blowupPred laugh
 intVP Cheered          = blowupPred cheer
 intVP Shuddered        = blowupPred shudder
+intVP Shined           = blowupPred shine
 intVP (VP1 tv np)      = \s -> intNP np (\o -> intTV tv s o) 
 intVP (VP2 tv _)       = self (intTV tv)
 intVP (VP3 dv np1 np2) = \s -> intNP np1 (\io -> intNP np2 
@@ -200,6 +202,8 @@ intTV Loved    = blowupPred2 love
 intTV Admired  = blowupPred2 admire 
 intTV Helped   = blowupPred2 help
 intTV Defeated = blowupPred2 defeat
+intTV Owned    = blowupPred2 own
+intTV Studied  = blowupPred2 study
 
 intDV :: DV -> Idx -> Idx -> Idx -> Trans
 intDV Gave = blowupPred3 give
@@ -207,7 +211,8 @@ intDV Gave = blowupPred3 give
 intINF :: INF -> Idx -> Trans
 intINF Laugh               = intVP Laughed
 intINF Cheer               = intVP Cheered
-intINF Shudder             = intVP Shuddered 
+intINF Shudder             = intVP Shuddered
+intINF Shine               = intVP Shined 
 intINF (INF1 tinf np)      = \s -> intNP np (\o -> 
                                    intTINF tinf s o)
 intINF (INF2 dinf np1 np2) = \s -> intNP np1 (\io -> 
@@ -219,6 +224,8 @@ intTINF Love   = intTV Loved
 intTINF Admire = intTV Admired
 intTINF Help   = intTV Helped
 intTINF Defeat = intTV Defeated
+intTINF Own    = intTV Owned
+intTINF Study  = intTV Studied
 
 intDINF :: DINF -> Idx -> Idx -> Idx -> Trans
 intDINF Give   = intDV Gave
@@ -231,6 +238,12 @@ intCN Dwarf    = blowupPred dwarf
 intCN Giant    = blowupPred giant
 intCN Wizard   = blowupPred wizard
 intCN Sword    = blowupPred sword
+intCN Telescope= blowupPred telescope
+intCN Universe = blowupPred universe
+intCN Star     = blowupPred star
+intCN Person   = blowupPred person
+
+
 
 intDET :: DET -> (Idx -> Trans) -> (Idx -> Trans) -> Trans
 
@@ -244,6 +257,8 @@ intDET No    = \ phi psi c -> let i = length c in
 intDET The   = \ phi psi c -> let i = length c in 
                ((unique (phi i)) `conj` 
                  exists `conj` (phi i) `conj` (psi i)) c
+intDET A     = \ phi psi c -> let i = length c in
+               (exists `conj` (phi i) `conj` (psi i)) c                
 
 intRCN :: RCN -> Idx -> Trans
 intRCN (RCN1 cn _ vp)   = \i -> conj (intCN cn i) 
@@ -445,6 +460,9 @@ intNP' Goldilocks = \p c ->
 intNP' LittleMook = \p c -> 
                     let (i,c') = resolveNAME littleMook c
                     in  p i c'
+intNP' IsaacNewton= \p c -> 
+                    let (i,c') = resolveNAME isaacNewton c
+                    in  p i c'                    
 
 intNP' He  = \p c b -> concat [p i c b | i <- resolveMASC c]
 intNP' She = \p c b -> concat [p i c b | i <- resolveFEM  c]
@@ -466,13 +484,17 @@ intVP' (VP5 _not inf)   = \ s -> neg' (intINF' inf s)
 
 intVP' Laughed   = blowupVP Laughed   laugh
 intVP' Cheered   = blowupVP Cheered   cheer 
-intVP' Shuddered = blowupVP Shuddered shudder 
+intVP' Shuddered = blowupVP Shuddered shudder
+intVP' Shined    = blowupVP Shined shine
 
 intTV' :: TV -> Idx -> Idx -> Trans'
 intTV' Loved    = blowupTV Loved    love 
 intTV' Admired  = blowupTV Admired  admire 
 intTV' Helped   = blowupTV Helped   help 
-intTV' Defeated = blowupTV Defeated defeat 
+intTV' Defeated = blowupTV Defeated defeat
+intTV' Owned    = blowupTV Owned own
+intTV' Studied  = blowupTV Studied study
+
 
 intDV' :: DV -> Idx -> Idx -> Idx -> Trans'
 intDV' Gave     = blowupDV Gave     give
@@ -480,18 +502,23 @@ intDV' Gave     = blowupDV Gave     give
 intINF' :: INF -> Idx -> Trans'
 intINF' Laugh               = intVP' Laughed
 intINF' Cheer               = intVP' Cheered
-intINF' Shudder             = intVP' Shuddered 
+intINF' Shudder             = intVP' Shuddered
+intINF' Shine               = intVP' Shined
 intINF' (INF1 tinf np)      = \ s -> intNP' np  (\ o -> 
                                      intTINF' tinf s o)
 intINF' (INF2 dinf np1 np2) = \ s -> intNP' np1 (\ io -> 
                                      intNP' np2 (\ o  -> 
                                      intDINF' dinf s io o))
 
+
 intTINF' :: TINF -> Idx -> Idx -> Trans'
 intTINF' Love   = intTV' Loved
 intTINF' Admire = intTV' Admired
 intTINF' Help   = intTV' Helped
 intTINF' Defeat = intTV' Defeated
+intTINF' Own    = intTV' Owned
+intTINF' Study  = intTV' Studied
+
 
 intDINF' :: DINF -> Idx -> Idx -> Idx -> Trans'
 intDINF' Give   = intDV' Gave
@@ -504,6 +531,11 @@ intCN' Dwarf    = blowupPred' dwarf
 intCN' Giant    = blowupPred' giant
 intCN' Wizard   = blowupPred' wizard
 intCN' Sword    = blowupPred' sword
+intCN' Telescope= blowupPred' telescope
+intCN' Universe = blowupPred' universe
+intCN' Star     = blowupPred' star
+intCN' Person   = blowupPred' person
+
 
 unique' :: Idx -> Trans' -> Trans'
 unique' i phi c b = 
@@ -524,6 +556,8 @@ intDET' The   = \ phi psi c -> let i = size c in
                 (conj' (unique' i (phi i)) 
                         exists' `conj'` (phi i) 
                                 `conj'` (psi i)) c
+intDET' A     = \ phi psi c -> let i = size c in 
+                 (exists' `conj'` (phi i) `conj'` (psi i)) c
 
 intRCN' :: RCN -> Idx -> Trans'
 intRCN' (RCN1 cn _ vp)    = \i -> conj' (intCN' cn i) 
