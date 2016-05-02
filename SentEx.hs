@@ -7,6 +7,12 @@ import P_Type
 import StringToEntityPredicate
 import DRAC_Type
 
+
+
+
+
+
+
 ex1  = Sent Dorothy Cheered
 ex2  = Sent Dorothy Laughed
 ex3  = Sent Dorothy (VP5 DidNot Laugh)

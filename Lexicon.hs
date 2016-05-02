@@ -66,6 +66,8 @@ lexicon "littlemook"   =
  [Cat "littlemook" "NP" [Thrd,Masc,Sg] []]
 lexicon "atreyu"       = 
  [Cat "atreyu"     "NP" [Thrd,Masc,Sg] []]
+ lexicon "isaacnewton"       = 
+ [Cat "isaacnewton"    "NP" [Thrd,Masc,Sg] []]
 
 lexicon "every"   = [Cat "every"   "DET" [Sg]  []]
 lexicon "all"     = [Cat "all"     "DET" [Pl]  []]
@@ -112,6 +114,13 @@ lexicon "swords"   = [Cat "swords"   "CN" [Pl,Neutr,Thrd] []]
 lexicon "dagger"   = [Cat "dagger"   "CN" [Sg,Neutr,Thrd] []]
 lexicon "daggers"  = [Cat "daggers"  "CN" [Pl,Neutr,Thrd] []]
 
+lexicon "telescope"   = [Cat "telescope"   "CN" [Sg,Neutr,Thrd] []]
+lexicon "telescopes"  = [Cat "telescopes"   "CN" [Pl,Sg,Neutr,Thrd] []]
+lexicon "universe"    = [Cat "universe"   "CN" [Sg,Neutr,Thrd] []]
+lexicon "universes"   = [Cat "universes"   "CN" [Pl,Sg,Neutr,Thrd] []]
+lexicon "star"        = [Cat "star"   "CN" [Sg,Neutr,Thrd] []]
+lexicon "stars"        = [Cat "stars"   "CN" [PL,Sg,Neutr,Thrd] []]
+
 lexicon "did"    = [Cat "did"    "AUX" [] []]
 lexicon "didn't" = [Cat "didn't" "AUX" [] []]
 
@@ -124,6 +133,9 @@ lexicon "cheer"     = [Cat "cheer"     "VP" [Infl]  []]
 lexicon "shuddered" = [Cat "shuddered" "VP" [Tense] []]
 lexicon "shudder"   = [Cat "shudder"   "VP" [Infl]  []]
 
+lexicon "shined"    = [Cat "shined"    "VP" [Tense] []]
+lexicon "shine"     = [Cat "shine"     "VP" [Infl]  []]
+
 lexicon "loved"        = 
  [Cat "loved"    "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
 lexicon "love"         = 
@@ -132,6 +144,15 @@ lexicon "admired"      =
  [Cat "admired"  "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
 lexicon "admire"       = 
  [Cat "admire"   "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]]
+
+ lexicon "owned"      = 
+ [Cat "owned"  "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
+lexicon "own"       = 
+ [Cat "own"   "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]]
+lexicon "studied"      = 
+ [Cat "studied"  "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
+lexicon "study"       = 
+ [Cat "study"   "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]]
 
 lexicon "helped"       = 
  [Cat "helped"   "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
