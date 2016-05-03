@@ -400,6 +400,8 @@ preproc ("less":"than":xs) = "less_than" : preproc xs
 preproc ("more":"than":xs) = "more_than" : preproc xs
 preproc ("at":"least":xs)  = "at_least"  : preproc xs
 preproc ("at":"most":xs)   = "at_most"   : preproc xs
+-- TODO: check if this is ok 
+preproc ("Issac":"Newton":xs) = "Newton" : preproc xs
 preproc (x:xs)             = x : preproc xs
 
 lookupWord :: (String -> [Cat]) -> String -> [Cat]

@@ -27,6 +27,9 @@ dorothy    = D
 goldilocks = G 
 littleMook = M
 atreyu     = Y
+-- TODO: May need to change later 
+isaacNewton = B
+
 
 -- Types for predicates on the model.  Notice all are "Curried"
 type OnePlacePred   = Entity -> Bool
@@ -40,7 +43,7 @@ list2OnePlacePred :: [Entity] -> OnePlacePred
 list2OnePlacePred xs = \ x -> elem x xs
 
 -- Sample one-place predicates representing nouns
-girl, boy, princess, dwarf, giant, wizard, sword, dagger
+girl, boy, princess, dwarf, giant, wizard, sword, dagger, telescope, universe
                                          :: OnePlacePred
 
 -- Define characteristic functions for each unary relation
@@ -52,6 +55,13 @@ giant    = list2OnePlacePred [T]
 wizard   = list2OnePlacePred [W,V]
 sword    = list2OnePlacePred [F]
 dagger   = list2OnePlacePred [X]
+-- TODO: May need to change to a specific list 
+telescope = list2OnePlacePred entities
+-- TODO: According to modern physics, there could be infinite # of universe
+universe = list2OnePlacePred entities
+-- TODO: According to modern physics, there should be infinite # of 
+-- universe
+star = list2OnePlacePred entities
 
 -- Predicates defined from earlier predicates
 child, person, man, woman, male, female, thing :: OnePlacePred
@@ -66,11 +76,13 @@ female = \ x -> (woman x || girl x)
 thing  = \ x -> not (person x || x == Unspec)
 
 -- Sample one place predicates (unary relations) representing verbs
-laugh, cheer, shudder :: OnePlacePred
+laugh, cheer, shudder, shine :: OnePlacePred
 -- Characteristic functions for intransitive verbs
 laugh   = list2OnePlacePred [A,G,E]
 cheer   = list2OnePlacePred [M,D]
 shudder = list2OnePlacePred [S]
+-- TODO: may need to change it later 
+shine   = list2OnePlacePred entities
 
 -- One place predicates (unary relations) representing verbs 
 red, dangerous :: OnePlacePred
@@ -78,7 +90,7 @@ red       = list2OnePlacePred [B, R, X]
 dangerous = list2OnePlacePred [F, G, X, W, V]
 
 -- Sample two place predicates representing transitive verbs
-love, admire, help, defeat :: TwoPlacePred
+love, admire, help, defeat, own :: TwoPlacePred
 -- characteristic functions for binary relations for transitive verbs
 love   = curry (`elem` [(Y,E),(B,S),(R,S)])
 admire = curry (`elem` [(x,G) | x <- entities, person x])
@@ -87,6 +99,10 @@ defeat = curry (`elem` [(x,y) | x <- entities,
                                 y <- entities,
                                 dwarf x && giant y]
                     ++ [(A,W),(A,V)])
+-- TODO: May need to y so that only thing can be owned is objects 
+own    = curry (`elem` [(x,y) | x <- entities, y <- entities])
+-- TODO: May need to y so that only thing can be owned is objects
+study  = curry (`elem` [(x,y) | x <- entities, y <- entities])
 
 -- Transform a function that takes three arguments into its curried form
 curry3 :: ((a,b,c) -> d) -> a -> b -> c -> d

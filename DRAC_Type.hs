@@ -30,7 +30,7 @@ data NP   = SnowWhite  | Alice | Dorothy | Goldilocks
 data RCN  = RCN1 CN That VP | RCN2 CN That NP TV
           deriving (Eq,Show,Read)
 
-data DET  = Every | Some | No | The | A
+data DET  = Every | Some | No | The | An
           deriving (Eq,Show,Read)
 data CN   = Girl   | Boy    | Princess | Dwarf | Giant 
           | Wizard | Sword  | Poison | Telescope | Universe
@@ -52,11 +52,14 @@ data DV   = Gave deriving (Eq,Show,Read)
 
 data AUX  = DidNot deriving (Eq,Show,Read) 
 
-data INF  = Laugh | Cheer  | Shudder | Shine | 
+data INF  = Laugh | Cheer  | Shudder | Shine 
           | INF1  TINF NP  | INF2  DINF NP NP 
           deriving (Eq,Show,Read) 
+
 data TINF = Love  | Admire | Help | Defeat | Own
             | Study
+          deriving (Eq, Show, Read)
+
 data DINF = Give deriving (Eq,Show,Read) 
 
 

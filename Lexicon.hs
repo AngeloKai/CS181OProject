@@ -66,8 +66,13 @@ lexicon "littlemook"   =
  [Cat "littlemook" "NP" [Thrd,Masc,Sg] []]
 lexicon "atreyu"       = 
  [Cat "atreyu"     "NP" [Thrd,Masc,Sg] []]
- lexicon "isaacnewton"       = 
+lexicon "isaacnewton" = 
  [Cat "isaacnewton"    "NP" [Thrd,Masc,Sg] []]
+lexicon "newton"      = 
+ [Cat "newton"    "NP" [Thrd,Masc,Sg] []]
+--lexicon "astronomer"  = 
+--  [Cat "astronomer" "NP" [Thrd, Masc, Sg] []]
+
 
 lexicon "every"   = [Cat "every"   "DET" [Sg]  []]
 lexicon "all"     = [Cat "all"     "DET" [Pl]  []]
@@ -119,22 +124,23 @@ lexicon "telescopes"  = [Cat "telescopes"   "CN" [Pl,Sg,Neutr,Thrd] []]
 lexicon "universe"    = [Cat "universe"   "CN" [Sg,Neutr,Thrd] []]
 lexicon "universes"   = [Cat "universes"   "CN" [Pl,Sg,Neutr,Thrd] []]
 lexicon "star"        = [Cat "star"   "CN" [Sg,Neutr,Thrd] []]
-lexicon "stars"        = [Cat "stars"   "CN" [PL,Sg,Neutr,Thrd] []]
+lexicon "stars"       = [Cat "stars"   "CN" [Pl,Sg,Neutr,Thrd] []]
 
 lexicon "did"    = [Cat "did"    "AUX" [] []]
 lexicon "didn't" = [Cat "didn't" "AUX" [] []]
 
 lexicon "smiled"    = [Cat "smiled"    "VP" [Tense] []]
-lexicon "smile"     = [Cat "smile"     "VP" [Infl]  []]
+lexicon "smile"     = [Cat "smile"     "VP" [Infl, Pl]  []]
 lexicon "laughed"   = [Cat "laughed"   "VP" [Tense] []]
-lexicon "laugh"     = [Cat "laugh"     "VP" [Infl]  []]
+lexicon "laugh"     = [Cat "laugh"     "VP" [Infl, Pl]  []]
 lexicon "cheered"   = [Cat "cheered"   "VP" [Tense] []]
-lexicon "cheer"     = [Cat "cheer"     "VP" [Infl]  []]
+lexicon "cheer"     = [Cat "cheer"     "VP" [Infl,Pl]  []]
 lexicon "shuddered" = [Cat "shuddered" "VP" [Tense] []]
-lexicon "shudder"   = [Cat "shudder"   "VP" [Infl]  []]
+lexicon "shudder"   = [Cat "shudder"   "VP" [Infl, Pl]  []]
 
 lexicon "shined"    = [Cat "shined"    "VP" [Tense] []]
 lexicon "shine"     = [Cat "shine"     "VP" [Infl]  []]
+lexicon "shines"    = [Cat "shine"      ""] 
 
 lexicon "loved"        = 
  [Cat "loved"    "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
@@ -145,9 +151,11 @@ lexicon "admired"      =
 lexicon "admire"       = 
  [Cat "admire"   "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]]
 
- lexicon "owned"      = 
+lexicon "owned"      = 
  [Cat "owned"  "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]
 lexicon "own"       = 
+ [Cat "own"   "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]]
+lexicon "is"        = 
  [Cat "own"   "VP" [Infl]  [Cat "_" "NP" [AccOrDat] []]]
 lexicon "studied"      = 
  [Cat "studied"  "VP" [Tense] [Cat "_" "NP" [AccOrDat] []]]

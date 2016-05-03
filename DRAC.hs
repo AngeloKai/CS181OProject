@@ -257,7 +257,7 @@ intDET No    = \ phi psi c -> let i = length c in
 intDET The   = \ phi psi c -> let i = length c in 
                ((unique (phi i)) `conj` 
                  exists `conj` (phi i) `conj` (psi i)) c
-intDET A     = \ phi psi c -> let i = length c in
+intDET An     = \ phi psi c -> let i = length c in
                (exists `conj` (phi i) `conj` (psi i)) c                
 
 intRCN :: RCN -> Idx -> Trans
@@ -556,7 +556,7 @@ intDET' The   = \ phi psi c -> let i = size c in
                 (conj' (unique' i (phi i)) 
                         exists' `conj'` (phi i) 
                                 `conj'` (psi i)) c
-intDET' A     = \ phi psi c -> let i = size c in 
+intDET' An     = \ phi psi c -> let i = size c in 
                  (exists' `conj'` (phi i) `conj'` (psi i)) c
 
 intRCN' :: RCN -> Idx -> Trans'
