@@ -334,7 +334,8 @@ person   = filter (`elem` [Fst,Snd,Thrd])
 gcase    = filter (`elem` [Nom,AccOrDat])
 pronType = filter (`elem` [Pers,Refl,Wh]) 
 tense    = filter (`elem` [Tense,Infl]) 
-prepType = filter (`elem` [On,With,By,To,From]) 
+prepType = filter (`elem` [On,With,By,To,From])
+humType  = filter (`elem` [Hum, Obj])
 
 prune :: Agreement -> Agreement
 prune fs = if   (Masc `elem` fs || Fem `elem` fs)
@@ -361,7 +362,8 @@ combine cat1 cat2 =
            length (gcase    feats) <= 1,
            length (pronType feats) <= 1,
            length (tense    feats) <= 1,
-           length (prepType feats) <= 1 ]
+           length (prepType feats) <= 1,
+           length (humType  feats) <= 1]
   where 
     feats = (prune . nub . sort) (fs cat1 ++ fs cat2)
 

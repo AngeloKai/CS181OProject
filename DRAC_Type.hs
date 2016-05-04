@@ -34,7 +34,7 @@ data DET  = Every | Some | No | The | An
           deriving (Eq,Show,Read)
 data CN   = Girl   | Boy    | Princess | Dwarf | Giant 
           | Wizard | Sword  | Poison | Telescope | Universe
-          | Star | Person 
+          | Star | Person | Astronomer
           deriving (Eq,Show,Read) 
 
 data That = That deriving (Eq,Show,Read)

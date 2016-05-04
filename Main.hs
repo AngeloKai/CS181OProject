@@ -33,7 +33,7 @@ parse :: Bool
 parse = True 
 
 exParagraph :: String
-exParagraph = "IsaacNewton owns a telescope. The telescope helped him study the universe. If a person owns a telescope, the person is a astronomer. Astronomers study stars. Every star shines. Every astronomer loves"
+exParagraph = "IsaacNewton owns a telescope. The telescope helped him study the universe. If a person owns a telescope, the person is a astronomer. Astronomers study stars. Every star shines. Every astronomer loves."
 
 --feedback :: IO ()
 --feedback = do 

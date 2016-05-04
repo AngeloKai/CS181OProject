@@ -8,6 +8,17 @@ import P_Type
 import StringToEntityPredicate
 import DRAC_Type
 
+stringToNP :: String -> NP
+stringToNP "snowwhite"   = SnowWhite
+stringToNP "alice"       = Alice
+stringToNP "dorothy"     = Dorothy
+stringToNP "goldilocks"  = Goldilocks
+stringToNP "littlemook"  = LittleMook
+stringToNP "atreyu"      = Atreyu
+stringToNP "he"          = He
+stringToNP "she"         = She
+stringToNP "it"          = It
+stringToNP "newton"      = IsaacNewton 
 
 
 -- The isInfixOf function takes two lists and returns True iff the first list is contained, wholly and intact, anywhere within the second.
@@ -21,6 +32,8 @@ stringToDET "every" = Every
 stringToDET "some"  = Some
 stringToDET "no"    = No
 stringToDET "the"   = The 
+stringToDET "a"     = An
+stringToDET "an"    = An
 
 stringToCN :: String -> CN 
 stringToCN "girl"     = Girl
@@ -31,18 +44,25 @@ stringToCN "giant"    = Giant
 stringToCN "wizard"   = Wizard
 stringToCN "sword"    = Sword
 stringToCN "poison"   = Poison
-
+stringToCN "telescope" = Telescope
+stringToCN "universe" = Universe
+stringToCN "star"     = Star
+stringToCN "person"   = Person
+stringToCN "astronomer" = Astronomer 
 
 stringToVP :: String -> VP
 stringToVP "laughed" = Laughed
 stringToVP "cheered" = Cheered
 stringToVP "shuddered" = Shuddered
+stringToVP "shined"  = Shined 
+
 
 stringToTV :: String -> TV
 stringToTV "loved"    = Loved
 stringToTV "admired"  = Admired
 stringToTV "helped"   = Helped
 stringToTV "defeated" = Defeated
+stringToTV "owned"    = Owned
 
 stringToAUX :: String -> AUX
 stringToAUX "didn't" =  DidNot

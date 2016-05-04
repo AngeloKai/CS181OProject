@@ -43,7 +43,7 @@ list2OnePlacePred :: [Entity] -> OnePlacePred
 list2OnePlacePred xs = \ x -> elem x xs
 
 -- Sample one-place predicates representing nouns
-girl, boy, princess, dwarf, giant, wizard, sword, dagger, telescope, universe
+girl, boy, princess, dwarf, giant, wizard, sword, dagger, telescope, universe, astronomer
                                          :: OnePlacePred
 
 -- Define characteristic functions for each unary relation
@@ -62,6 +62,7 @@ universe = list2OnePlacePred entities
 -- TODO: According to modern physics, there should be infinite # of 
 -- universe
 star = list2OnePlacePred entities
+astronomer = list2OnePlacePred entities
 
 -- Predicates defined from earlier predicates
 child, person, man, woman, male, female, thing :: OnePlacePred

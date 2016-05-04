@@ -52,7 +52,8 @@ data Feat = Masc  | Fem  | Neutr | MascOrFem
           | Nom   | AccOrDat 
           | Pers  | Refl | Wh 
           | Tense | Infl
-          | On    | With | By | To | From  
+          | On    | With | By | To | From
+          | Hum   | Obj  
           deriving (Eq, Show, Read, Ord)
 
 

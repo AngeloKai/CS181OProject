@@ -18,6 +18,9 @@ import DRAC
 parseEval :: String -> Prop'
 parseEval = eval' . treeToSent . parses
 
+sentParse :: String -> Sent 
+sentParse = treeToSent . parses
+
 treeToSent :: [ParseTree Cat Cat] -> Sent
 treeToSent [Branch (Cat _ "S" _ _ ) rest ] = treeToSent rest
 treeToSent [npOfSent, vpOfSent ] = 
@@ -33,15 +36,16 @@ treeToNP [Branch (Cat "_" "NP" _ _) rest] = treeToNP rest
 treeToNP [ Leaf (Cat npPhon "NP" _ _ ) ] =
   if (stringIsInt npPhon) 
     then   PRO (read npPhon)
-    else   case (strToLower npPhon) of "snowwhite"   -> SnowWhite
-                                       "alice"       -> Alice
-                                       "dorothy"     -> Dorothy
-                                       "goldilocks"  -> Goldilocks
-                                       "littlemook"  -> LittleMook
-                                       "atreyu"      -> Atreyu
-                                       "he"          -> He
-                                       "she"         -> She
-                                       "it"          -> It
+    else   stringToNP (strToLower npPhon)
+    --else   case (strToLower npPhon) of "snowwhite"   -> SnowWhite
+    --                                   "alice"       -> Alice
+    --                                   "dorothy"     -> Dorothy
+    --                                   "goldilocks"  -> Goldilocks
+    --                                   "littlemook"  -> LittleMook
+    --                                   "atreyu"      -> Atreyu
+    --                                   "he"          -> He
+    --                                   "she"         -> She
+    --                                   "it"          -> It
 treeToNP [ Leaf (Cat det "DET" _ _ ), Leaf (Cat cnPhon "CN" _ _) ] = NP1 (stringToDET (strToLower det)) (stringToCN (strToLower cnPhon))
 treeToNP [ Leaf (Cat det "DET" _ _ ), Branch (Cat cnPhon "CN" _ _) rcn ] = NP2 (stringToDET (strToLower det)) (treeToRCN rcn)
 
