@@ -48,7 +48,7 @@ girl, boy, princess, dwarf, giant, wizard, sword, dagger, telescope, universe, a
 
 -- Define characteristic functions for each unary relation
 girl     = list2OnePlacePred [S,A,D,G]
-boy      = list2OnePlacePred [M,Y]
+boy      = list2OnePlacePred [M,Y,B]
 princess = list2OnePlacePred [E]
 dwarf    = list2OnePlacePred [B,R]
 giant    = list2OnePlacePred [T]
@@ -56,20 +56,21 @@ wizard   = list2OnePlacePred [W,V]
 sword    = list2OnePlacePred [F]
 dagger   = list2OnePlacePred [X]
 -- TODO: May need to change to a specific list 
-telescope = list2OnePlacePred entities
+-- There are 2 telescopes in the world.
+telescope = list2OnePlacePred [Z]
 -- TODO: According to modern physics, there could be infinite # of universe
 universe = list2OnePlacePred entities
 -- TODO: According to modern physics, there should be infinite # of 
 -- universe
 star = list2OnePlacePred entities
-astronomer = list2OnePlacePred entities
+astronomer = list2OnePlacePred [B, P, M, Y]
 
 -- Predicates defined from earlier predicates
 child, person, man, woman, male, female, thing :: OnePlacePred
 
 child  = \ x -> (girl x  || boy x)
 person = \ x -> (child x || princess x || dwarf x 
-                         || giant x    || wizard x) 
+                         || giant x    || wizard x || astronomer x) 
 man    = \ x -> (dwarf x || giant x || wizard x) 
 woman  = \ x -> princess x 
 male   = \ x -> (man x || boy x) 
@@ -84,6 +85,8 @@ cheer   = list2OnePlacePred [M,D]
 shudder = list2OnePlacePred [S]
 -- TODO: may need to change it later 
 shine   = list2OnePlacePred entities
+shines  = shine 
+
 
 -- One place predicates (unary relations) representing verbs 
 red, dangerous :: OnePlacePred
@@ -94,16 +97,17 @@ dangerous = list2OnePlacePred [F, G, X, W, V]
 love, admire, help, defeat, own :: TwoPlacePred
 -- characteristic functions for binary relations for transitive verbs
 love   = curry (`elem` [(Y,E),(B,S),(R,S)])
-admire = curry (`elem` [(x,G) | x <- entities, person x])
-help   = curry (`elem` [(W,W),(V,V),(S,B),(D,M)])
+admire = curry (`elem` [(x,B) | x <- entities, astronomer x])
+help   = curry (`elem` [(Z, B)])
 defeat = curry (`elem` [(x,y) | x <- entities, 
                                 y <- entities,
                                 dwarf x && giant y]
                     ++ [(A,W),(A,V)])
 -- TODO: May need to y so that only thing can be owned is objects 
-own    = curry (`elem` [(x,y) | x <- entities, y <- entities])
+own    = curry (`elem` [(B,y) | y <- entities])
 -- TODO: May need to y so that only thing can be owned is objects
 study  = curry (`elem` [(x,y) | x <- entities, y <- entities])
+was    = curry (`elem` [(x,y) | x <- [S,A,D,G, M,Y, E, B, R, T, W, V, P], y <- [B, P]])
 
 -- Transform a function that takes three arguments into its curried form
 curry3 :: ((a,b,c) -> d) -> a -> b -> c -> d

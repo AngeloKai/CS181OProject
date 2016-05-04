@@ -11,6 +11,8 @@ import SentEx
 import SentConvert
 import DRAC 
 import StrToPropPrime
+import Utilities
+import Lexicon
 import System.Process
 import System.FilePath
 
@@ -33,7 +35,18 @@ parse :: Bool
 parse = True 
 
 exParagraph :: String
-exParagraph = "IsaacNewton owns a telescope. The telescope helped him study the universe. If a person owns a telescope, the person is a astronomer. Astronomers study stars. Every star shines. Every astronomer loves."
+exParagraph = sent1 ++ sent2 ++ sent3 ++ sent6
+
+sent1, sent2, sent3, sent4, sent5, sent6 :: String 
+sent1 = "Newton owned a telescope. "
+-- Temporarily don't work 
+sent2 = "The telescope helped Newton. "
+sent3 = "If a person owned a telescope, he was a astronomer. "
+
+sent4 = "Every astronomers studied the stars. "
+sent5 = "Every star shines. "
+-- Of course, Newton can't admire himself.
+sent6 = "Some astronomer admired Newton. "
 
 --feedback :: IO ()
 --feedback = do 

@@ -19,6 +19,9 @@ stringToNP "he"          = He
 stringToNP "she"         = She
 stringToNP "it"          = It
 stringToNP "newton"      = IsaacNewton 
+stringToNP "Newton"      = IsaacNewton
+stringToNP "isaacnewton" = IsaacNewton
+stringToNP "him"         = Him
 
 
 -- The isInfixOf function takes two lists and returns True iff the first list is contained, wholly and intact, anywhere within the second.
@@ -63,6 +66,11 @@ stringToTV "admired"  = Admired
 stringToTV "helped"   = Helped
 stringToTV "defeated" = Defeated
 stringToTV "owned"    = Owned
+stringToTV "is"       = Is
+stringToTV "are"      = Are
+stringToTV "was"      = Was
+stringToTV "were"      = Were
+
 
 stringToAUX :: String -> AUX
 stringToAUX "didn't" =  DidNot

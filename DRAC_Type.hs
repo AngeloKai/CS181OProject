@@ -22,7 +22,7 @@ data Sent = Sent NP VP | If Sent Sent | Txt Sent Sent
           deriving (Eq,Show,Read)
 
 data NP   = SnowWhite  | Alice | Dorothy | Goldilocks 
-          | LittleMook | Atreyu | IsaacNewton
+          | LittleMook | Atreyu | IsaacNewton | Him
           | PRO Idx    | He | She | It
           | NP1 DET CN | NP2 DET RCN 
           deriving (Eq,Show,Read)
@@ -34,19 +34,19 @@ data DET  = Every | Some | No | The | An
           deriving (Eq,Show,Read)
 data CN   = Girl   | Boy    | Princess | Dwarf | Giant 
           | Wizard | Sword  | Poison | Telescope | Universe
-          | Star | Person | Astronomer
+          | Star | Person | Astronomer 
           deriving (Eq,Show,Read) 
 
 data That = That deriving (Eq,Show,Read)
 data REFL = Self deriving (Eq,Show,Read)
 
-data VP   = Laughed | Cheered | Shuddered | Shined
+data VP   = Laughed | Cheered | Shuddered | Shined | Shines
           | VP1 TV NP    | VP2 TV REFL 
           | VP3 DV NP NP | VP4 DV REFL NP 
           | VP5 AUX INF  
           deriving (Eq,Show,Read) 
 data TV   = Loved   | Admired | Helped | Defeated | Owned
-          | Studied
+          | Studied | Is | Are | Was | Were
           deriving (Eq,Show,Read)
 data DV   = Gave deriving (Eq,Show,Read)
 

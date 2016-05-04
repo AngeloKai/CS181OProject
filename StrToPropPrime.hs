@@ -10,6 +10,8 @@ import DRAC_Type
 import SentEx
 import SentConvert
 import DRAC 
+import Utilities 
+import Lexicon
 
 -- SnowWhite laughed. No dwarf admired some princess that 
 -- shuddered. Every girl that some boy loved cheered. The
@@ -84,13 +86,3 @@ treeToINF :: [ParseTree Cat Cat] -> INF
 treeToINF [Branch vpSign [Leaf (Cat infPhon _ _ _)]] = (stringToINF infPhon) 
 treeToINF [Branch vpSign [Leaf (Cat tinfPhon _ _ _), np1]] = INF1 (stringToTINF tinfPhon) (treeToNP [np1]) 
 treeToINF [Branch vpSign [Leaf (Cat "give" _ _ _), np1, np2]] = INF2 Give (treeToNP [np1]) (treeToNP [np2])
-
-
--------- Utilities Functions ----------
--- Check if a string is an integer 
-stringIsInt :: String -> Bool
-stringIsInt = all isDigit
-
--- Convert a string to lowercase 
-strToLower :: String -> String
-strToLower = map toLower

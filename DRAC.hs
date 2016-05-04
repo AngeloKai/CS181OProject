@@ -189,6 +189,7 @@ intVP Laughed          = blowupPred laugh
 intVP Cheered          = blowupPred cheer
 intVP Shuddered        = blowupPred shudder
 intVP Shined           = blowupPred shine
+intVP Shines           = blowupPred shines 
 intVP (VP1 tv np)      = \s -> intNP np (\o -> intTV tv s o) 
 intVP (VP2 tv _)       = self (intTV tv)
 intVP (VP3 dv np1 np2) = \s -> intNP np1 (\io -> intNP np2 
@@ -467,6 +468,7 @@ intNP' IsaacNewton= \p c ->
 intNP' He  = \p c b -> concat [p i c b | i <- resolveMASC c]
 intNP' She = \p c b -> concat [p i c b | i <- resolveFEM  c]
 intNP' It  = \p c b -> concat [p i c b | i <- resolveNEU  c]
+intNP' Him = \p c b -> concat [p i c b | i <- resolveMASC c]
 intNP' (PRO i)       = \ p c ->  p i c 
 intNP' (NP1 det cn)  = (intDET' det) (intCN' cn) 
 intNP' (NP2 det rcn) = (intDET' det) (intRCN' rcn)
@@ -494,6 +496,7 @@ intTV' Helped   = blowupTV Helped   help
 intTV' Defeated = blowupTV Defeated defeat
 intTV' Owned    = blowupTV Owned own
 intTV' Studied  = blowupTV Studied study
+intTV' Was      = blowupTV Was was
 
 
 intDV' :: DV -> Idx -> Idx -> Idx -> Trans'
@@ -535,6 +538,7 @@ intCN' Telescope= blowupPred' telescope
 intCN' Universe = blowupPred' universe
 intCN' Star     = blowupPred' star
 intCN' Person   = blowupPred' person
+intCN' Astronomer = blowupPred' astronomer
 
 
 unique' :: Idx -> Trans' -> Trans'

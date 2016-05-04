@@ -227,8 +227,11 @@ pS,pNP,pVP,pD,pN :: Parser String String
 -- categories.  E.g. pS words returns a list containing (parsed, rest)
 -- if parsed is a concatenation of a prefix of words that form a complete
 -- sentence and rest is everything left over.
+
+-- TODO1: change NP 
+-- Notice: the P.hs file is surprisingly disconnected from DRAC 
 pS  = pNP <*> pVP
-pNP = symbol "Alice"  <|> symbol "Dorothy" <|> (pD <*> pN)
+pNP = symbol "Alice"  <|> symbol "Dorothy" <|> symbol "SnowWhite" <|> symbol "Goldilocks" <|> symbol "LittleMook" <|> symbol "Atreyu" <|> symbol "IssacNewton" <|> (pD <*> pN)
 pVP = symbol "smiled" <|> symbol "laughed"
 pD  = symbol "every"  <|> symbol "some"    <|> symbol "no"
 pN  = symbol "dwarf"  <|> symbol "wizard"
@@ -283,6 +286,8 @@ parseAs label ps = (\ xs -> Branch label xs) <$> collect ps
 
 -- build actual parse trees for our English grammar
 -- Notice nonterminals used as labels for interior nodes.
+
+-- TODO1: change NP 
 sent, np, vp, det, cn :: PARSER String Char
 sent =  parseAs 'S' [np,vp]
 np   =  symbolT "Alice"  <|> symbolT "Dorothy" 
@@ -403,7 +408,7 @@ preproc ("more":"than":xs) = "more_than" : preproc xs
 preproc ("at":"least":xs)  = "at_least"  : preproc xs
 preproc ("at":"most":xs)   = "at_most"   : preproc xs
 -- TODO: check if this is ok 
-preproc ("Issac":"Newton":xs) = "Newton" : preproc xs
+preproc ("Isaac":"Newton":xs) = "Newton" : preproc xs
 preproc (x:xs)             = x : preproc xs
 
 lookupWord :: (String -> [Cat]) -> String -> [Cat]
@@ -527,6 +532,9 @@ prs string = let ws = lexer string
      in  [ s | catlist <- collectCats lexicon ws, 
                (s,[])  <- parseSent catlist ]
 
+-------------------------------------------------------
+------------ 9.7 Handling Extractions -----------------
+-------------------------------------------------------
 
 
 infixr 4 <||>
