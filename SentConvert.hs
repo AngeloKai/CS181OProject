@@ -69,7 +69,7 @@ stringToTV "owned"    = Owned
 stringToTV "is"       = Is
 stringToTV "are"      = Are
 stringToTV "was"      = Was
-stringToTV "were"      = Were
+stringToTV "were"     = Were
 
 
 stringToAUX :: String -> AUX

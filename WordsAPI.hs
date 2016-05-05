@@ -3,6 +3,7 @@
 module WordsAPI where 
 
 import System.Process
+import Utilities 
 
 
 -- Take in a string of a word and output a IO string according to Words API
@@ -21,7 +22,34 @@ hasInstanceOf :: String -> Integer -> IO [String]
 hasInstanceOf word int = iostrToArr response
     where response = readCreateProcess (shell ("python .\\WordsAPI-python\\hasInstanceOf.py " ++ word ++ " " ++ (show int))) "" 
 
-
-iostrToArr :: IO String -> IO [String]
-iostrToArr ios = do str <- ios 
-                    return (lines str)
+usableDistractor :: String -> Integer -> IO [String]
+usableDistractor str int = 
+    if str == "isaacnewton" 
+        then 
+            do 
+                instanceResult <- getInstanceOf "Isaac Newton" 1
+                hasInstanceOf instanceResult int
+        else if str == "Every astronomer"
+            then 
+                do 
+                    return ["physicist", "mathmatician"]
+            else if (length (words str) > 1)
+                    then 
+                        do 
+                            return ["He was a mathmatician", "He was a scientist"]
+                    else if (str == "Admired")
+                            then 
+                                do 
+                                    return ["loved", "believed"]
+                            else if (str == "Helped")
+                                then 
+                                    do 
+                                        return ["assisted", "aided"]
+                                else if (str == "Owned")
+                                    then 
+                                        do 
+                                            return ["Have", "Bought"]
+                                    else
+                                        do 
+                                            synonymsResult <- getSynonyms str int
+                                            iostrToArr (return synonymsResult)

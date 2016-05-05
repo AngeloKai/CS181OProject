@@ -15,91 +15,74 @@ import Utilities
 import Lexicon
 import System.Process
 import System.FilePath
+import LexrankAPI
+import QuestionGenerator 
+import WordsAPI
+import System.IO.Unsafe
 
-echo :: IO()
-echo = do str <- getLine
-          putStrLn str
 
-ask :: String -> String -> IO()
-
-ask prompt ansPrefix = do putStr (prompt++": ")
-                          response <- getLine
-                          putStrLn (ansPrefix ++ " " ++ response)
-
-getInteger :: IO Integer  -- type is necessary as read is ambiguous
-getInteger = do putStr "Enter an integer: "
-                line <- getLine
-                return (read line)  -- converts string to int then to IO Integer
-
-parse :: Bool
-parse = True 
 
 exParagraph :: String
-exParagraph = sent1 ++ sent2 ++ sent3 ++ sent6
+exParagraph = sent1 ++ sent2 ++ sent3 ++ sent4
 
-sent1, sent2, sent3, sent4, sent5, sent6 :: String 
+sent1, sent2, sent3, sent4:: String 
 sent1 = "Newton owned a telescope. "
--- Temporarily don't work 
 sent2 = "The telescope helped Newton. "
 sent3 = "If a person owned a telescope, he was a astronomer. "
-
-sent4 = "Every astronomers studied the stars. "
-sent5 = "Every star shines. "
 -- Of course, Newton can't admire himself.
-sent6 = "Some astronomer admired Newton. "
+sent4 = "Some astronomer admired Newton. "
 
---feedback :: IO ()
---feedback = do 
---  putStrLn "On a scale of 1-5, how difficult do you think the question is?"
---  feedback <- getLine
+feedback :: IO ()
+feedback = do 
+  putStrLn "On a scale of 1-5, how difficult do you think the question is?"
+  feedback <- getLine
+  putStrLn "Thank you"
 
-playAgain :: IO ()
-playAgain = 
-  do 
-    putStrLn "Hi! Thank you for using QA! This program is designed to help students study better by automatically generate quizes based on input paragraphs! You can quit at any second by typing done."
-    putStrLn "How many quizes do you want to practice today?"
-    quizNum <- getLine 
-    putStrLn "Please give me the paragraphs you want to practice with"
-    paragraphs <- getLine
-    putStrLn "Who did the telescope help? \n"
-    putStrLn "A. newton"
-    putStrLn "B. albert einstein"
-    putStrLn "C. galileo galilei"
-    answer1 <- getLine
-    putStrLn "What do astronomers study? \n"
-    putStrLn "A. planet"
-    putStrLn "B. galaxy"
-    putStrLn "C. star"
-    answer2 <- getLine
-    putStrLn "What does Newton own? \n"
-    putStrLn "A. scope"
-    putStrLn "B. telescope"
-    putStrLn "C. microscope"
-    answer3 <- getLine 
-    putStrLn "Congrats!"
+distractorGenerator :: String -> Integer -> (String, String)
+distractorGenerator str int = (result !! 0, result !! 1)
+                              where result = unsafePerformIO (usableDistractor str int) 
 
---playAgain :: IO ()
---playAgain = 
---  do 
---    putStrLn "Type a word"
-    --s <- getLine 
-    --if s /= "done" 
-    --  then 
-    --    do 
-    --      putStrLn ("You said "++s)
-    --      putStrLn "Please make another guess"
-    --      playAgain
-    --  else putStrLn "done"
+distractorNum :: Integer
+distractorNum = 2
+
+fullQuestion :: [(String, String)] -> [(String, String, String, String)] 
+fullQuestion [] = []
+fullQuestion ((question, answer):rest) = [(question, answer, fstDistractor, sndDistractor)] ++ (fullQuestion rest)
+                                         where distractor = distractorGenerator answer distractorNum
+                                               fstDistractor = fst distractor
+                                               sndDistractor = snd distractor
+
+finalQ :: String -> [(String, String, String, String)] 
+finalQ str = fullQuestion (questionGenerator str)
+
+question :: [(String, String, String, String)] -> Integer -> IO ()
+question ((x1, x2, x3, x4):xs) int = 
+    if int == 0 
+        then
+            do 
+                putStrLn "Thank you. That is all the question."
+        else 
+            do 
+                putStrLn ("A. " ++ x1)
+                putStrLn ("B. " ++ x2)
+                putStrLn ("C. " ++ x3)
+                putStrLn ("D. " ++ x4) 
+                answer <- getLine
+                if answer == "B. "
+                    then putStrLn "Well done!"
+                    else putStrLn "Sorry, the answer is incorrect"
+                feedback 
+                question xs (int - 1)
+       
 
 main :: IO ()
-main = playAgain
-
------- Utilities Functions ------------
-fst3 :: (a, b, c) -> a
-fst3 (x, _, _) = x
-
-snd3 :: (a, b, c) -> b
-snd3 (_, x, _) = x
-
-trd3 :: (a, b, c) -> c
-trd3 (_, _, x) = x
+main = 
+  do 
+    putStrLn "Hi! Thank you for using QA! This program is designed to help students study better by automatically generate quizes based on input paragraphs! Please note that the current program is undeterministic in terms of the kind of questions that would be generated. It is recommended that you test it multiple times."
+    putStrLn "How many quizes do you want to practice today? Please choose 4 for the current version."
+    quizNum <- getLine 
+    putStrLn ("Please give me the paragraphs you want to practice with. Please copy and paste the following paragraphs: " ++ exParagraph)
+    paragraphs <- getLine
+    lexranked <- lexrankedStrs paragraphs
+    question (finalQ lexranked) (read quizNum)
+    putStrLn "Congrats!"

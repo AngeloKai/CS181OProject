@@ -75,10 +75,12 @@ lexicon "newton"      =
 lexicon "every"   = [Cat "every"   "DET" [Sg]  []]
 lexicon "all"     = [Cat "all"     "DET" [Pl]  []]
 lexicon "some"    = [Cat "some"    "DET" []    []]
+lexicon ".some"   = lexicon "some"
 lexicon "several" = [Cat "several" "DET" [Pl]  []]
 lexicon "a"       = [Cat "a"       "DET" [Sg]  []]
 lexicon "no"      = [Cat "no"      "DET" []    []]
 lexicon "the"     = [Cat "the"     "DET" []    []]
+lexicon ".the"    = lexicon "the"
 
 lexicon "most"    = [Cat "most"    "DET" [Pl]  []]
 lexicon "many"    = [Cat "many"    "DET" [Pl]  []]
@@ -271,6 +273,7 @@ lexicon "from" = [Cat "from" "PREP" [From] []]
 lexicon "and"   = [Cat "and"  "CONJ" [] []]
 lexicon "."     = [Cat "."    "CONJ" [] []]
 lexicon "if"    = [Cat "if"   "COND" [] []]
+lexicon ".if"   = lexicon "if"
 lexicon "then"  = [Cat "then" "THEN" [] []]
 
 lexicon _ = []
