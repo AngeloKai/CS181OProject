@@ -1,0 +1,664 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% An example LaTeX document for seniors completing their
+% senior exercise in Computer Science at Pomona College.
+%
+% Rett Bull
+% original document August 4, 2006
+% modified May 30, 2007
+% modified July 17, 2007
+% modified August 8, 2007
+% modified June 5, 2008
+% minor modifications June 1, 2009
+% annual modifications June 4, 2010
+% annual modifications, May 10 and August 17, 2011
+% changes in requirements, April 6, 2015, with help from Dave Kauchak
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% The standard heading, with two commonly-used packages.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[finalcopy]{srpaper}
+
+\usepackage{url}
+\usepackage{graphicx}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% The information for the front matter.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Bob the Quiz Builder: An Automatic Question Generation Machine}
+\author{Huakai Liao and Charles Shaviro}
+\date{May 2, 2016}
+\advisor{Professors Kim Bruce}
+\abstract{xxx}
+\acknowledgment{The authors are deeply grateful to Professor
+  Kim Bruce for his patient support and
+  generous suggestions.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% START IGNORING HERE!
+%
+% Ignore everything down to "STOP IGNORING HERE!" It is
+% local customization that is unnecessary to a typical
+% senior paper or thesis.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% The following lines provide the magic to put links in
+% the on-line pdf version of the document. To enable the
+% magic, simply remove the comment symbol from before the
+% \usepackage[pdftex]{hyperref} specification.
+%
+% Without the hyperref package, \plainXXX is a synonym
+% for \XXX, \phantomsection does nothing, and
+% \namedref{Section}{label} produces the same thing as
+% Section~\ref{label}.
+%
+% With the hyperref package, \plainXXX produces a
+% reference or url without a link, while \XXX creates
+% the link. The command \phantomsection is used to
+% insure that links refer to the correct page. The
+% command \namedref{Section}{label} produces the same
+% text as above, but the link is all of
+% ``Section~\ref{label},'' giving the user more area
+% ``clicking area.''
+%
+%\usepackage[pdftex]{hyperref}
+\makeatletter
+\@ifundefined{hyperref}{%
+   \def\hyperref[#1]{}
+   \let\plainref\ref
+   \let\plainpageref\pageref
+   \let\plainurl\url
+   \let\phantomsection\relax
+   }{%
+   \newcommand{\plainref}{\ref*}
+   \newcommand{\plainpageref}{\pageref*}
+   \let\plainurl\nolinkurl
+   \hypersetup{letterpaper=true,
+               plainpages=false,
+               pageanchor=true,
+               breaklinks=true,
+               bookmarks=true,
+               bookmarkstype=toc,
+               bookmarksopenlevel=2,
+               bookmarksnumbered=true,
+               hyperindex=true,
+               colorlinks=true,
+               linkcolor=blue,
+               urlcolor=magenta,
+               citecolor=green,
+               pdftitle=\@title,
+               pdfauthor=\@author}}
+\makeatother
+\newcommand{\namedref}[2]{\hyperref[#2]{#1~\plainref{#2}}}
+\newcommand{\namedpageref}[2]{\hyperref[#2]{#1~\plainpageref{#2}}}
+
+%
+% We change the second-level ``bullet'' from a dash to a
+% diamond.
+%
+\renewcommand\labelitemii{$\diamond$}
+
+%
+% The following definition is from Oren Patashnik's BibTeX
+% documentation.
+%
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+%
+% These commands create the index. We change the index
+% environment a bit to match our spacing and conventions.
+% The multicol package does a better job of producing
+% multiple columns than the standard LaTeX \twocolumn.
+%
+\usepackage{makeidx,multicol}
+\makeindex
+\newcommand{\selfreferencejoke}{% assumes the index is
+                                % short enough so that
+                                % ``self reference'' appears
+                                % on the last page
+  \index{self reference}}
+\makeatletter
+\renewenvironment{theindex}
+  {\chapter*{\indexname}
+   \addcontentsline{toc}{chapter}{\indexname}
+   The index appears here as a convenience to
+   those using this guide. Normally, a paper
+   or research thesis will not have an index.
+   \setlength{\columnseprule}{\z@}
+   \setlength{\columnsep}{35\p@}
+   \thispagestyle{plain}
+   \begin{multicols}{2}
+     \setlength{\parskip}{\z@ \@plus .3\p@}
+     \setlength{\parindent}{\z@}
+     \let\item\@idxitem
+     \displayspacing
+     \small}
+  {\selfreferencejoke\end{multicols}\clearpage}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% STOP IGNORING HERE!
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% The document begins here.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\texttt{} 
+\frontmatter
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Preface
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\preface
+ 
+As it became about time to decide upon an idea for our final project, we scoured the internet, looking at a multitude of different interesting computational semantics projects in our search for inspiration. Two programs stood out as especially interesting and related to what we have been studying: TEDQuiz and the WordNet database. 
+\newline
+TEDQuiz is an automatic quiz generation program that takes a TedTalk and creates a multiple choice quiz that works to assess one's retention of what was conveyed in the talk. Each quiz asks a number of questions that are either gist-content related or focused in on specific details. TEDQuiz certainly piqued our interest.
+\newline
+WordNet, on the other hand, is an immense online lexical database that represents the English language in a knowledge graph. It connects words with their synonyms, antonyms, related terms, etc. We were very impressed by how powerful and comprehensive WordNet is, and planned to use it later in our project.
+\newline 
+Inspired by these two impressive works, we set our sights on a project that would incorporate some of the ideas from both: an automatic question generation program. Our project would be a piece of software that would be similar to TEDQuiz, but which would not take a TEDTalk, but instead a block of text, and output a multiple-choice knowledge-checking quiz. Thus, the idea for Bob the Quiz Builder was born.
+\newline
+After doing further research, we come to understand that the field of automatic question generation is both old and new. Its roots lie long ago, when Cohen did some early work in its theory back in 1929. After him, the area lay dormant for quite a while. But it has been more active in the 21st century, with some influential papers published by H. Chad Lane and others, as well as a large conference in 2010 at which several groups worked to construct their own automatic question generating programs.
+\newline
+Our goal with Bob the Quiz Builder is to create our own automatic question generator, albeit one that works with a relatively limited vocabulary of words. We will draw upon a variety of articles and a couple of potent APIs to implement our program.
+
+
+
+
+% Emotion plays a critical role in our daily lives. Almost all of our cognitive processes, be it decision-making, learning, perception, all involve emotion one way or the other~\cite{howard2013intention}. We then expresses those emotion through our senses and expect the receiving parties to respond in an emotional way as well. In fact, we pretend the other party is emotional even when 
+
+% In fact, a growing number of research in the field of emotional intelligence has suggested that aptitude of emotional intelligence, the ability to recognize and employ emotion for constructive purpose, is a stronger predictor than IQ at measuring success in life, especially in interpersonal communication~\cite{pantic2003toward}.  By incorporating emotion in traditional human-computer interaction approach, the interaction can become more natural~\cite{nakatsu1998toward}, more persuasive~\cite{reeves1996people}, and essentially more effective ~\cite{derks2008emoticons}. In particular, the areas of research about computing that relates to emotion recognition and influences is commonly referred as "affective computing"~\cite{picard1995affective}. To start equipping computers with the power of emotion is to start equipping them with the ability to recognize emotion~\cite{picard2001toward}.
+
+% % Talk about basic emotion vs. scales 
+%  Unsurprisingly, emotion manifests itself through a variety of senses, including vision, audio, and haptics. In particular, facial expression has been shown to be a powerful predictor of human emotion in the seminal work of Paul Ekman in 1971. 
+%  Vocal messages are another powerful predictor of human emotion ~\cite{jaimes2007multimodal}.In fact, most early research in the field has been focusing on these two senses. Although vision and audio remained the two biggest areas of research in affective computing, with the recent advances in wearable technology, several other senses that were not previously thought of are now placed in the picture. For example, by equipping users with watches that can automatically detect heartbeat, physiological signals can now be incorporated in the process of emotion recognition. 
+
+
+% Write a little more here later. 
+
+% • The word emotion is inherently uncertain and subjective.
+% The term emotion has been used with different contextual
+% meanings by different people. It is difficult to define
+% emotion objectively, as it is an individual mental state that
+% arises spontaneously rather than through conscious effort.
+% Therefore, there is no common objective definition and
+% agreement on the term emotion. This is the fundamental
+% hurdle to proceed with scientific approach toward research
+% (Schroder and Cowie 2006).
+% • There are no standard speech corpora for comparing performance
+% of research approaches used to recognize emotions.
+% Most emotional speech systems are developed using
+% full blown emotions, but real life emotions are pervasive
+% and underlying in nature. Some databases are
+% recorded using experienced artists, whereas some other
+% are recorded using semi-experienced or inexperienced
+% subjects. The research on emotion recognition is limited
+% to 5–6 emotions, as most databases do not contain wide
+% variety of emotions (Ververidis and Kotropoulos 2006).
+% • Emotion recognition systems developed using various
+% features may be influenced by the speaker and language
+% dependent information. Ideally, speech emotion recognition
+% systems should be speaker and language independent
+% (Koolagudi and Rao 2010).
+% An important issue in the development of a speech
+% emotion recognition systems is identification of suitable
+% features that efficiently characterize different emotions
+% (Ayadi et al. 2011). Along with features, suitable models
+% are to be identified to capture emotion specific information
+% from extracted speech features.
+% • Speech emotion recognition systems should be robust
+% enough to process real-life and noisy speech to identify
+% emotions.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Introduction
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Overview}
+\label{Chapter:Premeditation}
+%There are three options for the senior exercise: a project,
+%a research thesis, and a clinic experience. The project has
+%been available for several years, while the thesis and
+%clinic options were first offered in 2007--2008.
+
+
+Bob the Quiz Builder is an automatic quiz generating program. It takes as input a block of text and a number (for the desired amount of questions), and outputs a multiple choice quiz on the most important parts of the text.
+\newline
+We believe that  Bob the Quiz Builder can be quite a useful program. As any student knows, half the battle of a thick binder of assigned reading is... the actual reading. On a long and tired night, it is easy to read page after page of text without actually \textit{retaining} the majority of the knowledge contained.  It is for this very reason that a large number of textbooks include questions at the end of each chapter. These 'knowledge checks' force the reader to think critically about the material. But what are students to do if these questions are not present in their reading? Use Bob the Quiz Builder, of course!
+\newline
+The implementation of Bob the Quiz Builder consisted of about five main parts (depending on how you count them). We will delve further into the specifics of each part in this paper, but for now, we will merely introduce each step.
+\newline
+The first problem was that of handling the inputed block of text. We hoped to accomplish this with some of the code provided to us in the course and with some that we would write on our own. Next, we planned to apply Discourse Representation Theory to create a knowledge graph from the text that could keep track of the connections between different words, sentences, and information. We would then use this map of interconnections to rank the sentences in the text. Which were referred to the most? Which were most integral to the greater document? From these rankings, we would choose the most important sentences and generate questions about them. To go along with the questions, we would also need to generate a number of 'distractors' (incorrect multiple choice answers) for the reader to pick out the correct answer from. And lastly, we hoped to implement a system that would allow us to rank the questions by their difficulty and usefulness. We believed that if we accomplished all this, Bob the Quiz Builder would transform from an intriguing idea into a practical and useful program.
+\newline
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Chapter: Parsing the Text and Creating a Knowledge Graph
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \chapter{Parsing/Kno}
+% \label{Chapter:Premeditation}
+% % Wait until the rest is finished to talk about this area because it may not need to be talked much about. 
+
+
+% file:///Users/angeloliao/Downloads/chp%253A10.1007%252F978-3-540-74889-2_7.pdf
+% Recognising Human Emotions from Body Movement and Gesture Dynamics
+% ~\cite{castellano2007recognising}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Chapter: Vocal Emotion
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Parsing the Text and Creating a Knowledge Graph}
+\label{Chapter:Parsing/Knowledge Grap}
+ 
+This first step, of parsing the inputed text block and representing it in a knowledge graph, is perhaps the most essential component of the project. Before we can generate any questions to test our user, we need to parse the text into a form of representation that we can analyze.
+\newline
+Fortunately, much of the code required for this step has been provided for us in the course 
+\footnote{All submitted files, except for FPH and FPH\textunderscore Type, have been modified to a certain degree.}
+. Specifically, we hoped to use two functions to help us: \textit{Parser} and \textit{Eval'}. \textit{Parser} takes as input a string (our block of text) and outputs a list of \textit{ParseTrees}. \textit{Eval'}, on the other hand, takes instead an element of type \textit{Sent}. So, we set to our first task: writing the function \textit{TreeToSent}.
+\newline
+\textit{TreeToSent} takes a list of \textit{ParseTrees} and outputs a \textit{Sent}. It relies upon a number of helper functions, \textit{treeToNP}, \textit{treeToVP}, \textit{treeToRCN}, \textit{treeToTV}, and \textit{treeToINF}. Although it required a good deal of code to implement, treeToSent does its job well. With its completion, we gained the ability to reconcile the two functions \textit{Parser} and \textit{Eval'}. After passing our inputed block of text into \textit{Parser} and \textit{treeToSent}, we could finally call \textit{Eval'} upon it. \textit{Eval'} applies discourse representation theory to its input, generating a list of contexts for it. This crucial result is what we will use to understand the connections between the various sentences and entities.
+
+% Two approaches are usually taken: synthesize the two tracks at the end or understnad them separately 
+
+% One major incentive in developing vocal emotion recognition system is to develop natural speech-based interaction system, such as Siri ~\cite{koolagudi2009iitkgp}. 
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Chapter: Ranking the Sentences
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Ranking The Sentences}
+\label{Chapter:Sentence Ranking}
+
+Next, we set our sights on deriving a way to rank the sentences based on importance and signficance to the rest of the text. For example, if our inputed text block is an essay on astronomy, we consider the question "What is astronomy?" to be more useful and consequential than a different one such as "Is Jupiter a planet?". Sure, Jupiter's status as a planet is relevant information, but it is inherently less integral to an essay on astronomy than the actual definiton of astronomy. If we poorly chose which sentences to ask questions about, we might end up quizzing the reader on irrelevant or inessential parts of the text, undermining the effectiveness of our program's goal of assessing knowledge retention.
+\newline
+We accomplished this ranking by using an API called LexRank. LexRank takes each sentence and assigns a weight to it. This weight is calculated by looking at the frequency of each entity throughout the knowledge graph, and by assessing how many times the components of the sentence are referenced and used in other parts of the text.
+\newline
+Using LexRank to weight our sentences allows us to quantify the importance of each sentence and solves the problem of choosing which sentences to ask questiobs about. By leveraging it, we gain the ability to ask a specific number of questions without fear of missing out on the core parts of the input text. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Chapter: Question Generation 
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Question Generation}
+\label{Chapter:Question Generation}
+
+Finally, we are prepared to address the actual question generation, the real heart of our project. With the ability to take our text and parse it, represent it in a knowledge graph, and pick and choose its most importent component sentences, we set to creating the quiz itself.
+\newline
+To achieve this, we wrote a function, \textit{sentToQuestion}, that takes as input a sentence represented in a type of \textit{Sent} and outputs a list of two strings. The two strings within the output list are the generated question and its correct solution. \textit{sentToQuestion} can produce this output in a number of ways, as shown:
+\newline
+\\
+Consider the sentence sent1 = NP1 (VP1 TV NP2) = "The man killed the bird"
+\newline
+\\
+To create a question about this sentence, we can remove a part of it and replace that part with a question word such as 'who' or 'what':
+\newline
+If we remove the NP1, we end up with: Who TV NP2 = "Who killed the bird?"
+\newline
+If we remove the TV, we are left with: What does NP1 do to NP2 = "What does the man do to the bird?"
+\newline
+If we remove the NP2, we have: What does NP1 TV = "What does the man kill?"
+\newline
+Even more complicated, we can have a sentence: sent2 = If sentA sentB
+\newline
+From here, we can produce the question: "What happens if sentA?"
+\newline
+\\
+It is important to note some of the immense difficulties that come with this problem. For example, we have shown above that when we remove the transitive verb, the generated question might be: "What does the man do to the bird?" However, the grammar of this question is slightly off from what we are looking for. The desired sentence would be: "What \textit{did} the man do to the bird?". We can see from the original sentence that the man has already killed the bird; the action has already occurred and we thus need to discuss it in the past tense. Each individual sentence that we consider may involve different parts of speech, different tenses, and a number of other specifics that, if not taken into account, can cause our questions to contain grammatical errors.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Chapter: Distractor Generation  
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Distractor Generation}
+\label{Chapter:Distractor Generation}
+
+The last step in creating our knowledge checking quiz is the generation of 'distractors': incorrect multiple choice answers to present along with the true solution. Generally speaking, these distractors should be similar ideas (or synonyms) to the real answer. To accomplish this, we went back to one of our inspirations from the very beginning: WordNet!
+\newline
+We use the WordNet API to look up these distractors. Our method for doing so changes depending on what word we are looking up. For most verbs and common nouns, this is relatively easy. WordNet contains a list of synonyms for each word in the database. Synonyms act as great distractor answers; for example, if the correct answer is 'sword', WordNet can provide synonyms such as 'knife' or 'dagger'.
+\newline
+Dealing with correct solutions that are proper nouns, however, becomes slightly more difficult. Handling these requires us to check what type the noun is, and then provide other examples of that same type. For example, if the correct answer is 'Isaac Newton', we need to trace back to the greater type of 'physicist', and then look at other instances of that type, such as 'Albert Einstein' or 'Richard Feynman'. This technique can in fact also be applied to common nouns and transitive verbs, although it is less neccesary and in some the same as referencing synonyms. While 'sword', 'knife', and 'dagger' are all synonyms, they are also instances of the greater type of 'weapon'.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Chapter: Question Ranking  
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Question Ranking}
+\label{Chapter:Question Ranking}
+
+The final portion of Bob the Quiz Builder is that of ranking the questions with respect to various metrics. Although we ran out of time and were not able to implement it, this part seems to be a clear next step for the program. To further stick to the spirit of natural language processing, we would like to add infrastructure to the project that allows us to rank the questions that are asked based on user input. There are a number of things that we could ask users about the questions, ranging from inquiries about question difficulty, to question relevance to the passage, to question helpfulness. Along with giving the user a voice in determining how the program might change in the future, this will also allow us to better understand how successful our program is. Which types of questions tend to be hardest? Which are most helpful to knowledge retention checking? We believe that adding this capacity to rank questions would light the path to any other next steps and changes we might want to make to Bob the Quiz Builder. The barebones of the program are up and running; next, we'd like to let user input guide us towards those things that need to be improveds and changed. 
+ 
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Chapter: Conclusion
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Conclusion}
+\label{Conclusion}
+
+Ultimately, we did not have time to implement everything that we wanted to include in the program because we ran out of time, yet Bob the Builder largely met our goal. The program is fairly successful in terms of delivering all basic funtionalities. However, the current version is limited in terms of the vocabulary, the instability in the Words API, and the fact that correct answer is always the first one. We are proud of the steps we took and what we were able to accomplish and are excited to build upon Bob the Builder in future.
+
+
+
+You can say the program is fairly succesful in terms of delivering all basic functionalities. However, the current version is limited in terms of the vocabulary, the instability in the Words API, and the fact that correct answer is always the first one
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Appendix: Schedule
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \appendix
+% \chapter{Sequence of Events}
+% \label{Appendix:Schedule}
+% \index{calendar|(}
+% \index{scheduling|(}
+% Precise due dates will be announced in the Senior Seminar,
+% over e-mail, and on the departmental web site. You are
+% responsible for knowing about---and meeting---the various
+% deadlines. The general schedule below is provided to help
+% you plan and balance your workload during the senior year.
+
+% There will be a few students who graduate in September or
+% December and cannot follow the usual schedule. Those
+% students will meet individually with the faculty and create
+% alternate timelines.
+
+
+% \section*{Junior Year}
+% Students should obtain permission for the research thesis
+% option or the clinic option early in the second semester.
+
+
+% \section*{Senior Year, Fall Semester}
+% The tasks to be completed in the fall semester are part of
+% the Senior Seminar. The fall group progress reports%
+% \index{progress meetings} will be
+% at the scheduled time of the Senior Seminar. There will, of
+% course, be other work for the seminar.
+
+% The due dates for the group project are not included here.
+% There will be similar milestones that will be announced by
+% the project's advisor.
+
+% \begin{description}
+% \item[Mid-September.] Submission of a ranked list of three
+% possible senior project advisors and
+% corresponding project ideas.
+% \item[Late September.] Title, advisor\index{advisor!choice of},
+% and description due.\index{topic!description due date}
+% Submit the title of your project, thesis,
+% or clinic; the name of your advisor; and a one- or
+% two-sentence description of the undertaking. All students
+% will do this, even though the information will be new only
+% for the students following the project option.
+% \item[Late October.] Annotated
+% bibliography due.\index{annotated bibliography!due date}
+% [Proj\-ect and research thesis only.]
+% \item[Mid-November] Literature review
+% and extended abstract due.%
+% \index{literature review!due date}%
+% \index{extended abstract!due date}
+% [Project and research thesis only.]
+% \item[Last day of classes.] Revisions, if
+% necessary, of literature review and extended abstract due.
+% [Project and research thesis only.] 
+% \end{description}
+
+% In addition, a student and advisor may agree on additional preparatory
+% tasks to be completed during the semester.
+
+
+% \section*{Senior Year, Spring Semester}
+% The schedule common to all students appears below. In addition
+% to these activities, you and your advisor\index{advisor!role of}
+% will agree on dates for activities---like partial drafts and
+% presentation rehearsals---that are specific to your particular
+% project.
+% \begin{description}
+% \item[Throughout the first half of the semester.]
+% Prog\-ress report meetings, at three or four week intervals
+% starting in the first or second
+% week of classes.\index{progress meetings}
+% Each student will give an informal, five-minute
+% presentation on the project's status.
+% Students in the group project will participate in these
+% meetings \emph{and} the much more frequent meetings of
+% their project team.
+% \item[Mid-April.] \emph{Complete} drafts
+% of papers and theses due.\index{paper and thesis!drafts}
+% Drafts of individual chapters will have been submitted
+% earlier.
+% [Proj\-ect, group project, and research thesis only.]
+% %\item[Late April, usually on a Thursday and a Friday.]
+% % hack to get good spacing with such a long label
+% \item[]\hspace*{-\labelsep}\textbf{Sometime in April, usually on a Thursday
+% and a Friday.}\hspace{\labelsep}%
+% Presentations.
+% The dates and times will be advertised.\index{presentation!dates}
+% \item[One week before the end of classes.] Papers and theses due.%
+% \index{paper and thesis!due date}
+% [Proj\-ect, group project, and research thesis only.]
+% \item[Friday after the end of classes.] Senior grades due.
+% \item[Sunday in mid-May.] Commencement.
+% \end{description}
+% \index{calendar|)}
+% \index{scheduling|)}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Appendix: Advice and Crisis Management
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \chapter{Gratuitous Advice and Crisis Management}
+% \label{Appendix:CrisisManagement}
+% Clearly, not every problem can be solved by reading this
+% booklet. But answers to many common ones \emph{can} be found
+% here, and we have seen many problems arise when the advice
+% and directions given here are ignored.
+
+% We expect you to read and assimilate every word of this
+% document within twenty-four hours of receiving it. We
+% recognize, however, that you may forget one or two
+% details. Here are some pointers that may be helpful in a
+% crisis. This list is expected to grow, based in large part
+% on your experience; please make suggestions.
+
+% \begin{description}
+% \item[Getting started.]
+% If you are uncertain of which of the three options to
+% select, read the material in
+% \namedref{Chapter}{Chapter:Premeditation}.
+% Take the time to make a deliberate choice
+% from among the three options. Speak with as many
+% people---especially faculty members and other
+% students---as you can, and be certain that you are
+% comfortable with your selection.
+% \item[Advisor or topic.]
+% If you have selected the project option and are casting
+% about for an advisor or topic, read
+% \namedref{Section}{Section:AdvisorAndTopic}. Speak with
+% faculty members and other students. Think, as concretely
+% as you can, about the nature of the project and how you
+% will pursue it. Remember that the quality of
+% the final product is singularly important. 
+% \item[Annotated bibliography.]
+% If you are faced with creating an annotated bibliography,
+% discuss possible sources with your advisor and read
+% \namedref{Section}{Section:AnnotatedBibliography}. For help
+% with formatting the bibliography, look at the sample files
+% \texttt{annbib\discretionary{-}{}{-}template\discretionary{.}{}{.}tex}
+% and \texttt{srpaper-sample-biblio.bib}, and read about
+% \LaTeX\ generally in \namedref{Section}{Section:LaTeXIntro}
+% and about bibliographic details in
+% \namedref{Sections}{Subsection:Citations}
+% and~\ref{Subsection:Bibliographies}.
+% \item[Literature review.]
+% If you are about to write a literature review, speak with
+% your advisor about the overall approach. Most likely, you
+% have read some articles that have introductory sections
+% reviewing previous work. These (usually) are good
+% examples. Read
+% \namedref{Section}{Section:LiteratureReview}. For the
+% document itself, use the sample file
+% \texttt{srpaper-template.tex}, but remember to specify the 
+% \texttt{short} option. Read
+% \namedref{Sections}{Section:LaTeXIntro}, 
+% \ref{Section:LaTeXAnatomy}, and~\ref{Section:LaTeXDetails}.
+% \item[Sloth.]
+% Have a specific timeline. If you are in the middle of your
+% senior exercise and you are
+% behind schedule, take action immediately. Reread
+% \namedref{Section}{Section:Scheduling}. Assess the situation
+% and make changes. Be willing to omit part of the project, if
+% necessary. Ask you advisor to make motivational threats.
+% \item[Writer's block.]
+% If you are beginning to write a paper or thesis, use a
+% divide-and-conquer strategy. Separate the content from the 
+% form, and separate the content into manageable
+% chapters. Discuss the organization with your advisor. Begin 
+% writing the introductory chapters early. Be sure that you
+% have a clear vision of your conclusion. Read the first few
+% sections of \namedref{Chapter}{Chapter:Prose}.
+
+% Begin writing early; there is never enough
+% time. You should have a substantial start on your paper
+% or thesis by the beginning of Spring Break. 
+% Writing the paper is an integral part of the project
+% and not something to be saved until everything
+% else is finished.
+% \item[Formatting.]
+% If you are working on formatting your paper or thesis using
+% \LaTeX, review the sample file
+% \texttt{srpaper-template.tex}. Read the later sections of 
+% \namedref{Chapter}{Chapter:Prose}. As problems arise, return to
+% the relevant sections in this document, refer to the
+% resources listed in \namedref{Section}{Subsection:References}, or
+% ask your advisor for further help.
+
+% Pay close attention to details (\emph{all} of them!) and
+% produce a professional-quality document. Among other things,
+% remember to proofread. Double check your spelling. Do not allow a
+% line of text to run into the margin or off the edge of a page.
+% If you do not
+% have any tables, use the \texttt{nolot} option to suppress
+% the list of tables after the table of contents.
+% \item[Stage fright.]
+% As you plan your presentation, reread the advice in
+% \namedref{Chapter}{Chapter:Presentation}.
+% Consider the visual aids. Think about the audience. Rehearse.
+% Then rehearse some more.
+% \item[Denial.]
+% If you are following the clinic option and think that none
+% of this applies to you, remember that you must give a
+% presentation. See the previous suggestion.
+% \end{description}
+
+\texttt{nolot}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Appendix: Source
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \chapter{Source for This Document}
+% \label{Appendix:Source}
+% This appendix exists to demonstrate how to create a source
+% listing, should you need to do it. Keep in mind, however,
+% that the sources are usually not required. Check with your
+% advisor.
+
+% To save paper, we have omitted the actual source
+% listing. The following line, which would have generated the
+% listing, was removed.
+% \begin{vcode}
+% {\small\displayspacing\verbatiminput{srexercise.tex}}
+% \end{vcode}
+% The listing can be found in the directory
+% \texttt{/common/cs/senior-exercise\discretionary{/}{}{/}latex/srexercise.tex}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Bibliography
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliography{srpaper-sample-biblio}
+
+Erkan, Günes, and Dragomir R. Radev. 2004. “LexRank: Graph-Based Lexical Centrality as Salience in Text Summarization.” The Journal of Artificial Intelligence Research. jair.org, 457–79.
+\newline
+Huang, Yi-Ting, Huang Yi-Ting, Tseng Ya-Min, Yeali S. Sun, and Meng Chang Chen. 2014. “TEDQuiz: Automatic Quiz Generation for TED Talks Video Clips to Assess Listening Comprehension.” In 2014 IEEE 14th International Conference on Advanced Learning Technologies. doi:10.1109/icalt.2014.105.
+\newline
+Kilgarriff, Adam, Kilgarriff Adam, and Fellbaum Christiane. 2000. “WordNet: An Electronic Lexical Database.” Language 76 (3): 706.
+\newline
+Lane, H. Chad, and Kurt VanLehn. 2005. “Teaching the Tacit Knowledge of Programming to Novices with Natural Language Tutoring.” Computer Science Education 15 (3). Routledge. Available from: Taylor and Francis, Ltd. 325 Chestnut Street Suite 800, Philadelphia, PA 19106. Tel: 800-354-1420; Fax: 215-625-2940; Web site: http://www.tandf.co.uk/journals: 183–201.
+\newline
+Le, Nguyen-Thinh, Tomoko Kojiri, and Niels Pinkwart. 2014. “Automatic Question Generation for Educational Applications – The State of Art.” In Advanced Computational Methods for Knowledge Engineering, 325–38. Advances in Intelligent Systems and Computing. Springer International Publishing.
+\newline
+Suchanek, Fabian M., Gjergji Kasneci, and Gerhard Weikum. 2007. “Yago: A Core of Semantic Knowledge.” In Proceedings of the 16th International Conference on World Wide Web, 697–706. WWW ’07. New York, NY, USA: ACM.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Index
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\printindex
+
+
+\end{document}
